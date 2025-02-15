@@ -1,0 +1,1 @@
+from src.lexicon.lexicon import LEXICON_RU

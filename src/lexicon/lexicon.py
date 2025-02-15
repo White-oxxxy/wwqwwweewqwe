@@ -1,0 +1,26 @@
+
+LEXICON_RU: dict[str, str] = {
+    '/start': 'Это база крутых текстов, нажмите Найти и следуйте инструкциям',
+    '/help': 'Вы можете найти интересующий вас текст по тэгу с префиксом # или по любому слову или предложению из этого текста',
+    'button_tag_search': 'Поиск по: тэг',
+    'button_text_search': 'Поиск по: текст',
+    'button_search': 'Найти',
+    'button_add': 'Добавить текст',
+    'button_next': 'Далее',
+    'button_back': 'Назад',
+    'button_back_to_search': 'Назад к поиску',
+    'button_menu': 'Меню',
+    'button_tag_list': 'Тэги',
+    'button_help': 'Помощь',
+    'answer_search': 'Выберите как провести поиск. Так же можете посмотреть список доступных тэгов.',
+    'answer_if_incorrect_prefix': 'Ошибка в префиксе!',
+    'answer_if_text_already_include': 'Данный текст уже добавлен!',
+    'answer_insert_tag': 'Введите тэг:',
+    'answer_insert_word': 'Введите слово или предложение из искомого текста:',
+    'answer_success': 'Успех!',
+    'answer_if_tag_missing': 'По такому тэгу ничего не найдено!',
+    'answer_insert_text': 'Вставьте желаемый текст:',
+    'answer_to_another_things': 'Я ничо не понял',
+    'answer_db': 'тута будэ база данных',
+
+}
