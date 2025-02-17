@@ -1,0 +1,22 @@
+from enum import Enum
+
+class AllLexicon(Enum):
+    command_start: str = "Это база крутых текстов, нажмите Найти и следуйте инструкциям"
+    command_help: str = "Вы можете найти интересующий вас текст по тэгу с префиксом # или по любому слову или предложению из этого текста"
+    button_tag_search: str = "Поиск по: тэг"
+    button_text_search: str = "Поиск по: текст"
+    button_search: str = "Найти"
+    button_next: str = "Далее"
+    button_back: str = "Назад"
+    button_back_to_search: str = "Назад к поиску"
+    button_menu: str = "Меню"
+    button_tag_list: str = "Тэги"
+    button_help: str = "Помощь"
+    answer_search: str = "Выберите как провести поиск. Так же можете посмотреть список доступных тэгов."
+    answer_if_incorrect_prefix: str = "Ошибка в префиксе!"
+    answer_insert_tag: str = "Введите тэг:"
+    answer_insert_word: str = "Введите слово или предложение из искомого текста:"
+    answer_if_tag_missing: str = "По такому тэгу ничего не найдено!"
+    answer_to_another_things: str = "Я ничо не понял"
+    answer_db: str = "тута будэ база данных"
+    answer_menu: str = "Вы в главном меню."

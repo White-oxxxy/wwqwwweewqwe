@@ -5,11 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="65b85970-1900-43c2-a197-859a79853a02" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/PythonProject1.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/commands_docker.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lexicon/all_users_lexicon.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/settings/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/.env.example" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config_data/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config_data/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/settings/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/filters/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/filters/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/filters/filters.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/filters/filters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/admin_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/admin_handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/other_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/other_handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/user_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/all_users_handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/keyboards/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/keyboards/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/keyboards/admin_keydoards.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/keyboards/admin_keydoards.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/keyboards/user_keyboards.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/keyboards/all_users_keyboards.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lexicon/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lexicon/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lexicon/lexicon.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +77,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\fedor\PycharmProjects\PythonProject1\src\main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />

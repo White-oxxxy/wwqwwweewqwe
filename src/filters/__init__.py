@@ -1,1 +1,6 @@
-from src.filters.filters import IsAdmin, IsTag
+from .filters import IsAdmin, IsTag
+
+__all__ = (
+    "IsAdmin",
+    "IsTag"
+)

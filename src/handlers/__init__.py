@@ -1,5 +1,5 @@
-from src.handlers.admin_handlers import router
+from .admin_handlers import admin_router
 
-from src.handlers.user_handlers import router
+from .all_users_handlers import all_users_router
 
-from src.handlers.other_handlers import router
+from .other_handlers import other_router

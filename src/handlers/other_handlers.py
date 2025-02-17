@@ -1,11 +1,10 @@
 from aiogram import Router
 from aiogram.types import Message
+from src.lexicon import *
 
-import src.lexicon
+other_router = Router()
 
-router = Router()
-
-@router.message()
+@other_router.message()
 async def send_answer(message: Message):
-    await message.answer(text=src.lexicon.LEXICON_RU['answer_to_another_things'])
+    await message.answer(text=AllLexicon.answer_to_another_things.value)
 
