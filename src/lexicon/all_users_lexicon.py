@@ -1,8 +1,10 @@
 from enum import Enum
 
 class AllLexicon(Enum):
-    command_start: str = "Это база крутых текстов, нажмите Найти и следуйте инструкциям"
-    command_help: str = "Вы можете найти интересующий вас текст по тэгу с префиксом # или по любому слову или предложению из этого текста"
+    command_button_start: str = "/start"
+    command_button_help: str = "/help"
+    command_button_start_description: str = "Для начала работы нажмите сюда!"
+    command_button_help_description: str = "Информация"
     button_tag_search: str = "Поиск по: тэг"
     button_text_search: str = "Поиск по: текст"
     button_search: str = "Найти"
@@ -12,6 +14,8 @@ class AllLexicon(Enum):
     button_menu: str = "Меню"
     button_tag_list: str = "Тэги"
     button_help: str = "Помощь"
+    answer_help: str = "Вы можете найти интересующий вас текст по тэгу с префиксом # или по любому слову или предложению из этого текста"
+    answer_start: str = "Это база крутых текстов, нажмите Найти и следуйте инструкциям"
     answer_search: str = "Выберите как провести поиск. Так же можете посмотреть список доступных тэгов."
     answer_if_incorrect_prefix: str = "Ошибка в префиксе!"
     answer_insert_tag: str = "Введите тэг:"

@@ -1,7 +1,10 @@
 from aiogram import F, Router
-from aiogram.filters import Command, CommandStart, and_f
+from aiogram.filters import Command, CommandStart, StateFilter
+from aiogram.fsm.state import default_state
 from aiogram.types import Message
+from aiogram.fsm.context import FSMContext
 
+from src.fsm import *
 from src.keyboards import *
 from src.lexicon import *
 from src.filters import *
@@ -11,9 +14,13 @@ config: Config = load_config()
 
 admin_router = Router()
 
-@admin_router.message(CommandStart(), IsAdmin(config.tg_bot.admin_ids))
+@admin_router.message(CommandStart(), IsAdmin(config.tg_bot.admin_ids), StateFilter(default_state))
 async def process_command_start(message: Message):
-    await message.answer(AllLexicon.command_start.value, reply_markup=admin_menu_kb)
+    await message.answer(AllLexicon.answer_start.value, reply_markup=admin_menu_kb)
+
+@admin_router.message(Command(commands="help"), IsAdmin(config.tg_bot.admin_ids), StateFilter(default_state))
+async def process_command_help(message: Message):
+    await message.answer(AllLexicon.answer_help.value, reply_markup=admin_menu_kb)
 
 @admin_router.message(IsAdmin(config.tg_bot.admin_ids), F.text == AllLexicon.button_menu.value)
 async def process_button_menu(message: Message):

@@ -1,22 +1,26 @@
 from aiogram import F, Router
-from aiogram.filters import Command, CommandStart
+from aiogram.filters import Command, CommandStart, StateFilter
+from aiogram.fsm.state import default_state
 from aiogram.types import Message
+from aiogram.fsm.context import FSMContext
+
+from src.fsm import *
 from src.lexicon import *
 from src.keyboards import *
 
 all_users_router = Router()
 
-@all_users_router.message(CommandStart())
+@all_users_router.message(CommandStart(), StateFilter(default_state))
 async def process_start_command(message: Message):
-    await message.answer(text=AllLexicon.command_start.value, reply_markup=all_users_menu_kb)
+    await message.answer(text=AllLexicon.answer_start.value, reply_markup=all_users_menu_kb)
 
-@all_users_router.message(Command(commands='help'))
+@all_users_router.message(Command(commands='help'), StateFilter(default_state))
 async def process_help_command(message: Message):
-    await message.answer(text=AllLexicon.command_start.command_help.value, reply_markup=all_users_menu_kb)
+    await message.answer(text=AllLexicon.answer_help.value, reply_markup=all_users_menu_kb)
 
-@all_users_router.message(F.text == AllLexicon.command_start.button_help.value)
+@all_users_router.message(F.text == AllLexicon.button_help.value)
 async def process_button_help(message: Message):
-    await message.answer(text=AllLexicon.command_start.command_help.value, reply_markup=all_users_back_menu_kb)
+    await message.answer(text=AllLexicon.answer_help.value, reply_markup=all_users_back_menu_kb)
 
 @all_users_router.message(F.text == AllLexicon.button_menu.value)
 async def process_button_menu(message: Message):
