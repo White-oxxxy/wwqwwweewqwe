@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class AllLexicon(Enum):
     command_button_start: str = "/start"
     command_button_help: str = "/help"

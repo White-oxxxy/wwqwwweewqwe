@@ -8,15 +8,16 @@ from redis.asyncio import Redis
 from src.settings import *
 from src.handlers import *
 
+
 async def main() -> None:
-    config: Config = load_config()
+    settings: DevSettings = get_settings()
 
     redis = Redis(host="localhost")
 
     storage = RedisStorage(redis=redis)
 
     bot = Bot(
-            token=config.tg_bot.token,
+            token=settings.BOT_TOKEN,
             default=DefaultBotProperties(parse_mode=ParseMode.HTML)
         )
     dp = Dispatcher(storage=storage)

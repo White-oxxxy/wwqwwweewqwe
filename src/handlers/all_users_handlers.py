@@ -8,6 +8,7 @@ from src.fsm import *
 from src.lexicon import *
 from src.keyboards import *
 
+
 all_users_router = Router()
 
 @all_users_router.message(CommandStart(), StateFilter(default_state))

@@ -1,9 +1,9 @@
-from .settings import Config, load_config
+from .dev import DevSettings, get_settings
 
 from .set_menu import set_main_menu
 
 __all__ = (
-    "Config",
-    "load_config",
+    "DevSettings",
+    "get_settings",
     "set_main_menu"
 )

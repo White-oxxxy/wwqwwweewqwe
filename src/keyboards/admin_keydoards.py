@@ -3,6 +3,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from src.lexicon import *
 
+
 # ---- клавиатура главного меню ----
 
 admin_menu_buttons: list[KeyboardButton] = [

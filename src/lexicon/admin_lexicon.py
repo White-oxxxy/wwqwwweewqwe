@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class AdminLexicon(Enum):
     button_add: str = "Добавить текст"
     answer_if_text_already_include: str = "Данный текст уже добавлен!"

@@ -2,6 +2,7 @@ from aiogram import Router
 from aiogram.types import Message
 from src.lexicon import *
 
+
 other_router = Router()
 
 @other_router.message()

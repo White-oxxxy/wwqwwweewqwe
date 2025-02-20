@@ -2,6 +2,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from src.lexicon import *
 
+
 # ---- клавиатура главного меню ----
 
 all_users_menu_buttons: list[KeyboardButton] = [
