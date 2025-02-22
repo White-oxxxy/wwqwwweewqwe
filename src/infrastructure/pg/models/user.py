@@ -2,10 +2,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import BigInteger, ForeignKey
 
 from src.infrastructure.pg.models.base import BaseORM
-from src.infrastructure.pg.models.mixins import TimeMixin
+from src.infrastructure.pg.models.mixins import TimeMixin, IdPkMixin
 
 
-class RoleORM(BaseORM, TimeMixin):
+class RoleORM(BaseORM, TimeMixin, IdPkMixin):
     __tablename__ = "roles" # noqa
 
     name: Mapped[str] = mapped_column(nullable=False)
@@ -14,13 +14,11 @@ class RoleORM(BaseORM, TimeMixin):
     users: Mapped[list["UserORM"]] = relationship(back_populates="role")
 
 
-class UserORM(BaseORM, TimeMixin):
+class UserORM(BaseORM, TimeMixin, IdPkMixin):
     __tablename__ = "users" # noqa
 
     user_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
     username: Mapped[str] = mapped_column(nullable=False)
-    first_name: Mapped[str] = mapped_column()
-    last_name: Mapped[str] = mapped_column()
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"), nullable=False)
 
     role: Mapped["RoleORM"] = relationship(back_populates="users")
@@ -28,7 +26,7 @@ class UserORM(BaseORM, TimeMixin):
     texts: Mapped[list["TextORM"]] = relationship(back_populates="user")
 
 
-class TextORM(BaseORM, TimeMixin):
+class TextORM(BaseORM, TimeMixin, IdPkMixin):
     __tablename__ = "texts" # noqa
 
     value: Mapped[str] = mapped_column(nullable=False)
@@ -38,7 +36,7 @@ class TextORM(BaseORM, TimeMixin):
     tags: Mapped[list["TagORM"]] = relationship(secondary="tag_text", back_populates="texts")
 
 
-class TagORM(BaseORM, TimeMixin):
+class TagORM(BaseORM, TimeMixin, IdPkMixin):
     __tablename__ = "tags" # noqa
 
     name: Mapped[str] = mapped_column(nullable=False)
