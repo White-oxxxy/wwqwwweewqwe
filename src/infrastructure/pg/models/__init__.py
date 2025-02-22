@@ -1,9 +1,11 @@
 from .base import BaseORM
-from .user import UserORM, RoleORM, TextORM
+from .user import UserORM, RoleORM, TextORM, TagORM, TextTagORM
 
 __all__ = (
     "BaseORM",
     "UserORM",
     "RoleORM",
-    "TextORM"
+    "TextORM",
+    "TagORM",
+    "TextTagORM"
 )

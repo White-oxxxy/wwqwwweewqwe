@@ -8,51 +8,51 @@ from src.infrastructure.pg.models.mixins import TimeMixin
 class RoleORM(BaseORM, TimeMixin):
     __tablename__ = "roles" # noqa
 
-    name: Mapped[str] = mapped_column()
+    name: Mapped[str] = mapped_column(nullable=False)
     description: Mapped[str] = mapped_column()
 
-    user: Mapped["UserORM"] = relationship(back_populates="role", uselist=False)
+    users: Mapped[list["UserORM"]] = relationship(back_populates="role")
 
 
 class UserORM(BaseORM, TimeMixin):
     __tablename__ = "users" # noqa
 
-    user_id: Mapped[int] = mapped_column(BigInteger)
-    username: Mapped[str] = mapped_column()
+    user_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
+    username: Mapped[str] = mapped_column(nullable=False)
     first_name: Mapped[str] = mapped_column()
     last_name: Mapped[str] = mapped_column()
-    role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"))
+    role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"), nullable=False)
 
-    role: Mapped["RoleORM"] = relationship(back_populates="user", uselist=False)
-    tag: Mapped[list["TagORM"]] = relationship(back_populates="user")
-    text: Mapped[list["TextORM"]] = relationship(back_populates="user")
+    role: Mapped["RoleORM"] = relationship(back_populates="users")
+    tags: Mapped[list["TagORM"]] = relationship(back_populates="user")
+    texts: Mapped[list["TextORM"]] = relationship(back_populates="user")
 
 
 class TextORM(BaseORM, TimeMixin):
     __tablename__ = "texts" # noqa
 
-    value: Mapped[str] = mapped_column()
-    uploader_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"))
+    value: Mapped[str] = mapped_column(nullable=False)
+    uploader_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), nullable=False)
 
-    user: Mapped[list["UserORM"]] = relationship(back_populates="text")
-    texttag: Mapped["TextTagORM"] = relationship(back_populates="text", uselist=False) # noqa
+    user: Mapped["UserORM"] = relationship(back_populates="text")
+    tags: Mapped[list["TagORM"]] = relationship(secondary="tag_text", back_populates="texts")
 
 
 class TagORM(BaseORM, TimeMixin):
     __tablename__ = "tags" # noqa
 
-    name: Mapped[str] = mapped_column()
-    uploader_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"))
+    name: Mapped[str] = mapped_column(nullable=False)
+    uploader_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("users.id"), nullable=False)
 
-    user: Mapped[list["UserORM"]] = relationship(back_populates="tag")
-    textag: Mapped["TextTagORM"] = relationship(back_populates="tag", uselist=False) # noqa
+    user: Mapped["UserORM"] = relationship(back_populates="tag", uselist=False, secondary="tag_text")
+    texts: Mapped[list["TextORM"]] = relationship(secondary="tag_text", back_populates="tags")
 
 
 class TextTagORM(BaseORM, TimeMixin):
-    __tablename__ = "tagtext" # noqa
+    __tablename__ = "tag_text" # noqa
 
-    tag_id: Mapped[int] = mapped_column(ForeignKey("tags.id"))
-    text_id: Mapped[int] = mapped_column(ForeignKey("texts.id"))
+    tag_id: Mapped[int] = mapped_column(ForeignKey("tags.id"), nullable=False)
+    text_id: Mapped[int] = mapped_column(ForeignKey("texts.id"), nullable=False)
 
-    tag: Mapped["TagORM"] = relationship(back_populates="texttag", uselist=False) # noqa
-    text: Mapped["TextORM"] = relationship(back_populates="texttag", uselist=False) # noqa
+    tag: Mapped["TagORM"] = relationship(back_populates="texts")
+    text: Mapped["TextORM"] = relationship(back_populates="tags")
