@@ -5,11 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="65b85970-1900-43c2-a197-859a79853a02" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/di/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/di/dev.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/pg/models/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/pg/models/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/pg/models/mixins.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/pg/models/mixins.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/pg/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/pg/models/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infrastructure/repository/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/repository/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/pg/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/pg/database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/infrastructure/repository/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/repository/user.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -96,5 +95,16 @@
       <updated>1739212879148</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
