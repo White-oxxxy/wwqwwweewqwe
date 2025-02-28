@@ -2,14 +2,19 @@ from functools import lru_cache
 from typing import AsyncIterable
 
 from dishka import Provider, AsyncContainer, Scope, make_async_container, provide
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    create_async_engine,
+    async_sessionmaker,
+)
 
 from src.infrastructure.repository.user import (
     RoleRepositoryORM,
     UserRepositoryORM,
     TagRepositoryORM,
     TextRepositoryORM,
-    TextTagRepositoryORM
+    TextTagRepositoryORM,
 )
 from src.settings.base import CommonSettings
 from src.settings.dev import DevSettings
@@ -27,11 +32,15 @@ class DatabaseProvider(Provider):
         return create_async_engine(url=settings.POSTGRES_URL)
 
     @provide(scope=Scope.APP)
-    async def create_session_maker(self, engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
+    async def create_session_maker(
+        self, engine: AsyncEngine
+    ) -> async_sessionmaker[AsyncSession]:
         return async_sessionmaker(bind=engine, autoflush=True)
 
     @provide(scope=Scope.REQUEST, provides=AsyncSession)
-    async def provide_session(self, sessionmaker: async_sessionmaker[AsyncSession]) -> AsyncIterable[AsyncSession]:
+    async def provide_session(
+        self, sessionmaker: async_sessionmaker[AsyncSession]
+    ) -> AsyncIterable[AsyncSession]:
         async with sessionmaker() as session:
             yield session
 
@@ -58,7 +67,9 @@ class RepositoryProvider(Provider):
         return repository
 
     @provide(scope=Scope.REQUEST)
-    async def provide_text_tag_repository(self, session: AsyncSession) -> TextTagRepositoryORM:
+    async def provide_text_tag_repository(
+        self, session: AsyncSession
+    ) -> TextTagRepositoryORM:
         repository = TextTagRepositoryORM(session=session)
         return repository
 

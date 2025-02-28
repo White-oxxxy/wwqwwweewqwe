@@ -9,5 +9,4 @@ class BaseRepositoryORM(ABC):
     session: AsyncSession
 
     @abstractmethod
-    async def get_by_id(self, required_id: int):
-        ...
+    async def get_by_id(self, required_id: int): ...

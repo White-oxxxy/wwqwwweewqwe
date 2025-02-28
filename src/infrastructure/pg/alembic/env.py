@@ -32,6 +32,7 @@ target_metadata = BaseORM.metadata
 settings = get_settings()
 config.set_main_option("sqlalchemy.url", settings.POSTGRES_URL)
 
+
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 

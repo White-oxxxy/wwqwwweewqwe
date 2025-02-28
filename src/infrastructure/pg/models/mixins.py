@@ -12,7 +12,7 @@ class TimeMixin:
     create_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=datetime.now(timezone.utc),
-        server_default=func.now()
+        server_default=func.now(),
     )
 
     update_at: Mapped[datetime] = mapped_column(
@@ -20,5 +20,5 @@ class TimeMixin:
         default=datetime.now(timezone.utc),
         server_default=func.now(),
         onupdate=datetime.now(timezone.utc),
-        server_onupdate=func.now()
+        server_onupdate=func.now(),
     )
