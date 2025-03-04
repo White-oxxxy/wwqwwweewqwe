@@ -5,6 +5,8 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
     async_sessionmaker,
 )
+from src.settings import *
+settings: DevSettings = get_settings()
 
 
 class Database:
@@ -18,9 +20,11 @@ class Database:
             pool_recycle=1800,
         )
         self.session_maker: async_sessionmaker[AsyncSession] = async_sessionmaker(
-            bind=self.engine, autoflush=True, expire_on_commit=True
+            bind=self.engine, autoflush=False, expire_on_commit=True
         )
 
     async def get_session(self) -> AsyncIterable[AsyncSession]:
         async with self.session_maker() as session:
             yield session
+
+database = Database(settings.POSTGRES_URL)

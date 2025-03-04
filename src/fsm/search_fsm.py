@@ -1,6 +1,9 @@
 from aiogram.fsm.state import State, StatesGroup
 
 
-class FSMSearchForm(StatesGroup):
+class FSMTagSearchForm(StatesGroup):
     fill_tag = State()
-    fill_words = State()
+
+class FSMTextSearchForm(StatesGroup):
+    fill_text = State()
+

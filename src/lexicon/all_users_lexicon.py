@@ -29,3 +29,4 @@ class AllLexicon(Enum):
     answer_to_another_things: str = "Я ничо не понял"
     answer_db: str = "тута будэ база данных"
     answer_menu: str = "Вы в главном меню."
+    answer_result: str = "Результат поиска:"
