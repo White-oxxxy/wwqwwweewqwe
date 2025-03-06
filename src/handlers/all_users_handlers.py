@@ -27,16 +27,16 @@ all_users_router = Router()
 )
 async def process_start_command(message: Message) -> None:
     async with database.get_session() as session:
-        user = await UserRepositoryORM.get_by_user_id(
-            session, message.from_user.id
+        user = await UserRepositoryORM(session=session).get_by_user_id(
+            message.from_user.id
         )
         if user:
             await message.answer(
                 text=AllLexicon.answer_start.value, reply_markup=all_users_menu_kb
             )
         else:
-            await UserRepositoryORM.add_user(
-                session, user_id=message.from_user.id, username=message.from_user.username,role_id=1
+            await UserRepositoryORM(session=session).add_user(
+                user_id=message.from_user.id, username=message.from_user.username,role_id=1
             )
             await message.answer(
                 text=AllLexicon.answer_start.value, reply_markup=all_users_menu_kb
@@ -83,9 +83,11 @@ async def process_search(message: Message) -> None:
     F.text == AllLexicon.button_tag_list.value, StateFilter(default_state)
 )
 async def process_tag_list(message: Message) -> None:
-    await message.answer(
-        text=AllLexicon.answer_db.value, reply_markup=all_users_back_to_search_kb
-    )
+    async with database.get_session() as session:
+        tags: await TagRepositoryORM(session=session).get_all_tag_names()
+        await message.answer(
+            text=", ".join(map(str, tags)), reply_markup=all_users_back_to_search_kb
+        )
 
 
 @all_users_router.message(

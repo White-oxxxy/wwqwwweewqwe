@@ -11,7 +11,7 @@ class RoleORM(BaseORM, TimeMixin, IdPkMixin):
     name: Mapped[str] = mapped_column(nullable=False)
     description: Mapped[str] = mapped_column()
 
-    users: Mapped[list["UserORM"]] = relationship(back_populates="role")
+    user: Mapped[list["UserORM"]] = relationship(back_populates="role")
 
 
 class UserORM(BaseORM, TimeMixin, IdPkMixin):
@@ -21,7 +21,7 @@ class UserORM(BaseORM, TimeMixin, IdPkMixin):
     username: Mapped[str] = mapped_column(nullable=False)
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"), nullable=False)
 
-    role: Mapped["RoleORM"] = relationship(back_populates="users")
+    role: Mapped["RoleORM"] = relationship(back_populates="user")
     tags: Mapped[list["TagORM"]] = relationship(back_populates="user")
     texts: Mapped[list["TextORM"]] = relationship(back_populates="user")
 
@@ -34,9 +34,10 @@ class TextORM(BaseORM, TimeMixin, IdPkMixin):
         BigInteger, ForeignKey("users.id"), nullable=False
     )
 
-    user: Mapped["UserORM"] = relationship(back_populates="text")
+    user: Mapped["UserORM"] = relationship(back_populates="texts")
     tags: Mapped[list["TagORM"]] = relationship(
-        secondary="tag_text", back_populates="texts"
+        secondary="tag_text",
+        back_populates="texts",
     )
 
 
@@ -49,20 +50,22 @@ class TagORM(BaseORM, TimeMixin, IdPkMixin):
     )
 
     user: Mapped["UserORM"] = relationship(
-        back_populates="tag", uselist=False, secondary="tag_text"
+        back_populates="tags", uselist=False
     )
     texts: Mapped[list["TextORM"]] = relationship(
-        secondary="tag_text", back_populates="tags"
+        secondary="tag_text",
+        back_populates="tags"
     )
 
 
 class TextTagORM(BaseORM, TimeMixin):
     __tablename__ = "tag_text"  # noqa
 
-    tag_id: Mapped[int] = mapped_column(ForeignKey("tags.id"), nullable=False)
-    text_id: Mapped[int] = mapped_column(ForeignKey("texts.id"), nullable=False)
+    tag_id: Mapped[int] = mapped_column(
+        ForeignKey("tags.id"), nullable=False, primary_key=True
+    )
+    text_id: Mapped[int] = mapped_column(
+        ForeignKey("texts.id"), nullable=False, primary_key=True
+    )
 
     __table_args__ = (PrimaryKeyConstraint("text_id", "tag_id"),)
-
-    tag: Mapped["TagORM"] = relationship(back_populates="texts")
-    text: Mapped["TextORM"] = relationship(back_populates="tags")

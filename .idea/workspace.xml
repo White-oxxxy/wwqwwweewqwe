@@ -5,18 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="65b85970-1900-43c2-a197-859a79853a02" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/lexicon/roles.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/filters/filters.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/filters/filters.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fsm/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/fsm/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fsm/search_fsm.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/fsm/search_fsm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/handlers/admin_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/admin_handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker_compose/storages.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docker_compose/storages.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/handlers/all_users_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/all_users_handlers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/infrastructure/pg/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/pg/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/keyboards/admin_keydoards.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/keyboards/admin_keydoards.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lexicon/admin_lexicon.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lexicon/admin_lexicon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lexicon/all_users_lexicon.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lexicon/all_users_lexicon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/pg/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/pg/models/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/repository/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/repository/user.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

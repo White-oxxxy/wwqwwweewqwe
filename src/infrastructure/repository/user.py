@@ -123,10 +123,10 @@ class TagRepositoryORM(BaseRepositoryORM):
 
         return tag
 
-    async def get_all(self) -> list[TagORM]:
-        stmt: Select[tuple[TagORM]] = select(TagORM)
+    async def get_all_tag_names(self) -> list[TagORM.name]:
+        stmt: Select[tuple[TagORM.name]] = select(TagORM.name)
         result: Result = await self.session.execute(stmt)
-        tags: list[TagORM] = list(result.scalars().all())
+        tags: list[TagORM.name] = list(result.scalars().all())
 
         return tags
 

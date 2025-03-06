@@ -1,16 +1,31 @@
 services:
-
   postgres:
     image: postgres:16-alpine
-    container_name: pg_example
-    volumes:
-      - dbdata6:/data/db
+    container_name: pg
     ports:
       - "45432:5432"
+    env_file:
+      - ../.env
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:?}
-      POSTGRES_USER: ${POSTGRES_USER:?}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      POSTGRES_DB: $POSTGRES_DB
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    networks:
+      - backend
 
-volumes:
-  dbdata6:
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "80:80"
+    depends_on:
+      - postgres
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
