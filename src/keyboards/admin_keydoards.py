@@ -9,7 +9,7 @@ from src.lexicon import *
 admin_menu_buttons: list[KeyboardButton] = [
     KeyboardButton(text=AllLexicon.button_search.value),
     KeyboardButton(text=AdminLexicon.button_add.value),
-    KeyboardButton(text=AllLexicon.button_help.value),
+    KeyboardButton(text=AllLexicon.button_help.value)
 ]
 
 admin_menu_kb_builder = ReplyKeyboardBuilder()

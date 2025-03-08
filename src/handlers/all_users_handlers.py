@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 
 from src.infrastructure.pg.database import database
 from src.filters import IsTag
+from src.lexicon.roles import Roles
 from src.fsm import *
 from src.lexicon import *
 from src.keyboards import *
@@ -27,16 +28,15 @@ all_users_router = Router()
 )
 async def process_start_command(message: Message) -> None:
     async with database.get_session() as session:
-        user = await UserRepositoryORM(session=session).get_by_user_id(
-            message.from_user.id
-        )
+        user_repo = UserRepositoryORM(session=session)
+        user = await user_repo.get_by_user_id(message.from_user.id)
         if user:
             await message.answer(
                 text=AllLexicon.answer_start.value, reply_markup=all_users_menu_kb
             )
         else:
             await UserRepositoryORM(session=session).add_user(
-                user_id=message.from_user.id, username=message.from_user.username,role_id=1
+                user_id=message.from_user.id, username=message.from_user.username,role_id=Roles.user.value
             )
             await message.answer(
                 text=AllLexicon.answer_start.value, reply_markup=all_users_menu_kb
@@ -84,9 +84,17 @@ async def process_search(message: Message) -> None:
 )
 async def process_tag_list(message: Message) -> None:
     async with database.get_session() as session:
-        tags: await TagRepositoryORM(session=session).get_all_tag_names()
+        tag_repo = TagRepositoryORM(session=session)
+
+        tags = await tag_repo.get_all_tag_names()
+
+    if tags:
         await message.answer(
             text=", ".join(map(str, tags)), reply_markup=all_users_back_to_search_kb
+        )
+    else:
+        await message.answer(
+            text=AllLexicon.answer_empty_tag_list.value, reply_markup=all_users_search_kb
         )
 
 
@@ -102,7 +110,7 @@ async def process_back_to_search(message: Message) -> None:
 @all_users_router.message(
     F.text == AllLexicon.button_back_to_search.value, ~StateFilter(default_state)
 )
-async def process_back_to_search(message: Message, state: FSMContext) -> None:
+async def process_back_to_search_while_fsm(message: Message, state: FSMContext) -> None:
     await message.answer(
         text=AllLexicon.answer_search.value, reply_markup=all_users_search_kb
     )
@@ -120,25 +128,25 @@ async def process_tag_search(message: Message, state: FSMContext) -> None:
 
 
 @all_users_router.message(
-    StateFilter(FSMTagSearchForm.fill_tag), IsTag(F.text)
-)
-async def process_sent_tag(message: Message, state: FSMContext) -> None:
-    await state.update_data(
-        tag=message.text
-    )
-    await state.clear()
-    await message.answer(
-        text=AllLexicon.answer_result.value, reply_markup=all_users_text_showing_interaction_kb
-    )
-
-
-@all_users_router.message(
     StateFilter(FSMTagSearchForm.fill_tag)
 )
-async def warning_incorrect_tag(message: Message) -> None:
-    await message.answer(
-        text=AllLexicon.answer_if_incorrect_prefix.value, reply_markup=all_users_back_to_search_kb
-    )
+async def process_sent_tag(message: Message, state: FSMContext) -> None:
+    if message.text[0] == AdminLexicon.prefix.value:
+        await state.update_data(
+            tag=message.text
+        )
+        async with database.get_session() as session:
+            repo = TextTagRepositoryORM(session=session)
+
+
+        await message.answer(
+            text=AllLexicon.answer_result.value, reply_markup=all_users_text_showing_interaction_kb
+        )
+        await state.clear()
+    else:
+        await message.answer(
+            text=AllLexicon.answer_if_incorrect_prefix.value, reply_markup=all_users_back_to_search_kb
+        )
 
 
 @all_users_router.message(

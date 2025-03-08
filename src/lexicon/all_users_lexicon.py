@@ -30,3 +30,4 @@ class AllLexicon(Enum):
     answer_db: str = "тута будэ база данных"
     answer_menu: str = "Вы в главном меню."
     answer_result: str = "Результат поиска:"
+    answer_empty_tag_list: str = "Пока еще нет тэгов"

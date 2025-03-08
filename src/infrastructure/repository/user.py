@@ -1,6 +1,6 @@
 from sqlalchemy import Result, Select, select, BigInteger
-from sqlalchemy.orm import joinedload, subqueryload
-from sqlalchemy.testing.suite.test_reflection import users
+from sqlalchemy.orm import joinedload
+from typing import List
 
 from src.infrastructure.pg.models.user import (
     UserORM,
@@ -18,15 +18,15 @@ class RoleRepositoryORM(BaseRepositoryORM):
 
         return role
 
-    async def add_role(self, name: str, description: str) -> RoleORM | None:
+    async def add_role(self, name: str,uploader_id: int, description: str) -> RoleORM | None:
         stmt: Select[tuple[RoleORM]] = select(RoleORM).where(RoleORM.name == name)
         result: Result = await self.session.execute(stmt)
-        role: RoleORM | None = result.scalars().one_or_none()
+        role: RoleORM | None = result.scalar_one_or_none()
 
         if role:
             raise ValueError("Такая роль уже есть!")
 
-        role: RoleORM = RoleORM(name=name, description=description)
+        role: RoleORM = RoleORM(name=name, uploader_id=uploader_id, description=description)
         self.session.add(role)
 
         await self.session.commit()
@@ -37,7 +37,7 @@ class RoleRepositoryORM(BaseRepositoryORM):
     async def get_by_name(self, name: str) -> RoleORM | None:
         stmt: Select[tuple[RoleORM]] = select(RoleORM).where(RoleORM.name == name)
         result: Result = await self.session.execute(stmt)
-        role: RoleORM | None = result.scalars().one_or_none()
+        role: RoleORM | None = result.scalar_one_or_none()
 
         return role
 
@@ -53,7 +53,7 @@ class UserRepositoryORM(BaseRepositoryORM):
     ) -> UserORM | None:
         stmt: Select[tuple[RoleORM]] = select(RoleORM).where(RoleORM.id == role_id)
         result: Result = await self.session.execute(stmt)
-        role: RoleORM | None = result.scalars().one_or_none()
+        role: RoleORM | None = result.scalar_one_or_none()
         if not role:
             raise ValueError("Нет такой роли!")
 
@@ -68,7 +68,7 @@ class UserRepositoryORM(BaseRepositoryORM):
     async def get_by_user_id(self, user_id: int) -> UserORM | None:
         stmt: Select[tuple[UserORM]] = select(UserORM).where(UserORM.user_id == user_id)
         result: Result = await self.session.execute(stmt)
-        user: UserORM | None = result.scalars().one_or_none()
+        user: UserORM | None = result.scalar_one_or_none()
 
         return user
 
@@ -77,19 +77,14 @@ class UserRepositoryORM(BaseRepositoryORM):
             UserORM.username == username
         )
         result: Result = await self.session.execute(stmt)
-        user: UserORM | None = result.scalars().one_or_none()
+        user: UserORM | None = result.scalar_one_or_none()
 
         return user
 
-    async def get_by_role(self, role_name: str) -> list[UserORM]:
-        stmt: Select[tuple[UserORM]] = (
-            select(UserORM)
-            .join(UserORM.role)
-            .where(RoleORM.name == role_name)
-            .options(joinedload(UserORM.role))
-        )
+    async def get_by_role(self, role_id: int) -> List[UserORM]:
+        stmt: Select[tuple[UserORM]] = select(UserORM).where(UserORM.role_id == role_id)
         result: Result = await self.session.execute(stmt)
-        user: list[UserORM] = list(result.scalars().all())
+        user: List[UserORM] = list(result.scalars().all())
 
         return user
 
@@ -103,7 +98,7 @@ class TagRepositoryORM(BaseRepositoryORM):
     async def add_tag(self, name: str, uploader_id: int) -> TagORM | None:
         stmt: Select[tuple[TagORM]] = select(TagORM).where(TagORM.name == name)
         result: Result = await self.session.execute(stmt)
-        tag: TagORM | None = result.scalars().one_or_none()
+        tag: TagORM | None = result.scalar_one_or_none()
 
         if tag:
             raise ValueError("Такой тэг уже есть!")
@@ -119,14 +114,14 @@ class TagRepositoryORM(BaseRepositoryORM):
     async def get_by_tag(self, name: str) -> TagORM | None:
         stmt: Select[tuple[TagORM]] = select(TagORM).where(TagORM.name == name)
         result: Result = await self.session.execute(stmt)
-        tag: TagORM | None = result.scalars().one_or_none()
+        tag: TagORM | None = result.scalar_one_or_none()
 
         return tag
 
-    async def get_all_tag_names(self) -> list[TagORM.name]:
+    async def get_all_tag_names(self) -> List[TagORM.name]:
         stmt: Select[tuple[TagORM.name]] = select(TagORM.name)
         result: Result = await self.session.execute(stmt)
-        tags: list[TagORM.name] = list(result.scalars().all())
+        tags: List[TagORM.name] = list(result.scalars().all())
 
         return tags
 
@@ -140,7 +135,7 @@ class TextRepositoryORM(BaseRepositoryORM):
     async def add_text(self, value: str, uploader_id: int) -> TextORM | None:
         stmt: Select[tuple[TextORM]] = select(TextORM).where(TextORM.value == value)
         result: Result = await self.session.execute(stmt)
-        text: TextORM | None = result.scalars().one_or_none()
+        text: TextORM | None = result.scalar_one_or_none()
         if text:
             raise ValueError("Такой текст уже добавлен")
 
@@ -160,7 +155,7 @@ class TextRepositoryORM(BaseRepositoryORM):
 class TextTagRepositoryORM(BaseRepositoryORM):
     async def get_by_id(self, required_id: int): ...
 
-    async def get_by_tag(self, name: str) -> list[TextORM] | None:
+    async def get_by_tag(self, name: str) -> List[TextORM] | None:
         stmt = (
             select(TextORM)
             .join(TextTagORM, TextTagORM.text_id == TextORM.id)
@@ -169,7 +164,7 @@ class TextTagRepositoryORM(BaseRepositoryORM):
             .options(joinedload(TextORM.tags))
         )
         result = await self.session.execute(stmt)
-        text: list[TextORM] = list(result.scalars().all())
+        text: List[TextORM] = list(result.scalars().all())
 
         return text
 

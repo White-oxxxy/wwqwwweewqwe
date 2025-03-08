@@ -1,5 +1,9 @@
-from .add_fsm import FSMAddForm
+from .fsm import (
+    FSMAddForm,
+    FSMTagSearchForm,
+    FSMTextSearchForm
+)
 
-from .search_fsm import FSMTagSearchForm, FSMTextSearchForm
+from .fsm import FSMTagSearchForm, FSMTextSearchForm
 
 __all__ = ("FSMAddForm", "FSMTagSearchForm", "FSMTextSearchForm")
