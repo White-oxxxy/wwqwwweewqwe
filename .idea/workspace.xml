@@ -5,21 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="65b85970-1900-43c2-a197-859a79853a02" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/docker_compose/app.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker_compose/redis.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/PythonProject1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PythonProject1.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/filters/filters.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/filters/filters.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fsm/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/fsm/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fsm/add_fsm.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/fsm/fsm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/fsm/search_fsm.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirments.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/di/dev.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/di/dev.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/handlers/admin_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/admin_handlers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/handlers/all_users_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/all_users_handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/handlers/other_handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/handlers/other_handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/pg/alembic/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/pg/alembic/env.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/infrastructure/pg/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/pg/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infrastructure/pg/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/pg/models/user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/infrastructure/repository/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/infrastructure/repository/user.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/keyboards/admin_keydoards.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/keyboards/admin_keydoards.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lexicon/admin_lexicon.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lexicon/admin_lexicon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lexicon/all_users_lexicon.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lexicon/all_users_lexicon.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lexicon/roles.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lexicon/roles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/keyboards/all_users_keyboards.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/keyboards/all_users_keyboards.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/settings/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/settings/base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/settings/dev.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/settings/dev.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/settings/set_menu.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/settings/set_menu.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,16 +48,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.qwe.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.main (1).executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.qwe.executor": "Run",
+    "Python.user.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\fedor\PycharmProjects\PythonProject1\src\infrastructure\pg" />
@@ -128,9 +133,32 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="user" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="PythonProject1" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/infrastructure/pg/models" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/infrastructure/pg/models/user.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Python.main (1)" />
+        <item itemvalue="Python.user" />
         <item itemvalue="Python.qwe" />
         <item itemvalue="Python.main" />
       </list>

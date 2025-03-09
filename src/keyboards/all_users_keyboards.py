@@ -1,6 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
-from src.lexicon import *
+from lexicon import *
 
 
 # ---- клавиатура главного меню ----

@@ -9,15 +9,14 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
 )
 
-from src.infrastructure.repository.user import (
+from infrastructure.repository.user import (
     RoleRepositoryORM,
     UserRepositoryORM,
-    TagRepositoryORM,
     TextRepositoryORM,
     TextTagRepositoryORM,
 )
-from src.settings.base import CommonSettings
-from src.settings.dev import DevSettings
+from settings.base import CommonSettings
+from settings.dev import DevSettings
 
 
 class CommonProvider(Provider):
@@ -57,11 +56,6 @@ class RepositoryProvider(Provider):
         return repository
 
     @provide(scope=Scope.REQUEST)
-    async def provide_tag_repository(self, session: AsyncSession) -> TagRepositoryORM:
-        repository = TagRepositoryORM(session=session)
-        return repository
-
-    @provide(scope=Scope.REQUEST)
     async def provide_text_repository(self, session: AsyncSession) -> TextRepositoryORM:
         repository = TextRepositoryORM(session=session)
         return repository
@@ -75,7 +69,7 @@ class RepositoryProvider(Provider):
 
 
 @lru_cache(1)
-def create_container() -> AsyncContainer:
+def get_container() -> AsyncContainer:
     return make_async_container(
         CommonProvider(), DatabaseProvider(), RepositoryProvider()
     )

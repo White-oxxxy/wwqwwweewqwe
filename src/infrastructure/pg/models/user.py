@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import BigInteger, ForeignKey, PrimaryKeyConstraint
 
-from src.infrastructure.pg.models.base import BaseORM
-from src.infrastructure.pg.models.mixins import TimeMixin, IdPkMixin
+from .base import BaseORM
+from .mixins import TimeMixin, IdPkMixin
 
 
 class RoleORM(BaseORM, TimeMixin, IdPkMixin):
@@ -22,8 +22,6 @@ class UserORM(BaseORM, TimeMixin, IdPkMixin):
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"), nullable=False)
 
     role: Mapped["RoleORM"] = relationship(back_populates="user")
-    tags: Mapped[list["TagORM"]] = relationship(back_populates="user")
-    texts: Mapped[list["TextORM"]] = relationship(back_populates="user")
 
 
 class TextORM(BaseORM, TimeMixin, IdPkMixin):
@@ -31,10 +29,9 @@ class TextORM(BaseORM, TimeMixin, IdPkMixin):
 
     value: Mapped[str] = mapped_column(nullable=False)
     uploader_id: Mapped[int] = mapped_column(
-        BigInteger, ForeignKey("users.id"), nullable=False
+        BigInteger, nullable=False
     )
 
-    user: Mapped["UserORM"] = relationship(back_populates="texts")
     tags: Mapped[list["TagORM"]] = relationship(
         secondary="tag_text",
         back_populates="texts",
@@ -46,12 +43,9 @@ class TagORM(BaseORM, TimeMixin, IdPkMixin):
 
     name: Mapped[str] = mapped_column(nullable=False)
     uploader_id: Mapped[int] = mapped_column(
-        BigInteger, ForeignKey("users.id"), nullable=False
+        BigInteger, nullable=False
     )
 
-    user: Mapped["UserORM"] = relationship(
-        back_populates="tags", uselist=False
-    )
     texts: Mapped[list["TextORM"]] = relationship(
         secondary="tag_text",
         back_populates="tags"

@@ -4,18 +4,18 @@ from aiogram.fsm.state import default_state
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
-from src.infrastructure.pg.database import database
-from src.lexicon.roles import Roles
-from src.fsm import *
-from src.keyboards import *
-from src.lexicon import *
-from src.filters import *
-from src.infrastructure.repository.user import (
+from infrastructure.pg.models import TagORM, TextORM
+from lexicon.roles import Roles
+from fsm import *
+from keyboards import *
+from lexicon import *
+from filters import *
+from infrastructure.repository.user import (
     UserRepositoryORM,
-    TagRepositoryORM,
     TextRepositoryORM
 )
-from src.settings.dev import DevSettings, get_settings
+from settings.dev import DevSettings, get_settings
+from di.dev import get_container
 
 
 settings: DevSettings = get_settings()
@@ -27,8 +27,9 @@ admin_router = Router()
     IsAdmin(admin_ids), CommandStart(), StateFilter(default_state)
 )
 async def process_command_start(message: Message) -> None:
-    async with database.get_session() as session:
-        user_repository = UserRepositoryORM(session=session)
+    container = get_container()
+    async with container() as req_container:
+        user_repository = await req_container.get(UserRepositoryORM)
 
         user = await user_repository.get_by_user_id(message.from_user.id)
         if user:
@@ -101,18 +102,24 @@ async def process_insert_tag(message: Message, state: FSMContext) -> None:
 
 
 @admin_router.message(
-    IsAdmin(admin_ids), StateFilter(FSMAddForm.insert_text), F.text.isalpha()
+    IsAdmin(admin_ids), StateFilter(FSMAddForm.insert_text)
 )
 async def process_insert_text(message: Message, state: FSMContext) -> None:
     await state.update_data(text=message.text)
-    async with database.get_session() as session:
-        tag_repo = TagRepositoryORM(session=session)
-        text_repo = TextRepositoryORM(session=session)
+    container = get_container()
+    async with container() as req_container:
+        text_repo: TextRepositoryORM = await req_container.get(TextRepositoryORM)
         data = await state.get_data()
 
-        await tag_repo.add_tag(name=data.get("tag"), uploader_id=message.from_user.id)
+        tag: TagORM | None = await text_repo.get_by_tag(name=data.get("tag"))
+        if tag is None:
+            tag: TagORM = TagORM(name=data.get("tag"), uploader_id=message.from_user.id)
 
-        await text_repo.add_text(value=data.get("text"), uploader_id=message.from_user.id)
+        text: TextORM = await text_repo.add_text(value=data.get("text"), uploader_id=message.from_user.id)
+
+        await text_repo.add_tag(tag, text)
+        await text_repo.session.commit()
+
 
     await message.answer(
         text=AdminLexicon.answer_success_text_added.value, reply_markup=admin_menu_kb

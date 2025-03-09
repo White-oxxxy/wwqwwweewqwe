@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pydantic_settings import SettingsConfigDict
 
-from src.settings.base import CommonSettings
+from settings.base import CommonSettings
 
 
 class DevSettings(CommonSettings):

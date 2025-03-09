@@ -1,0 +1,19 @@
+services:
+  content_service:
+    container_name: content-service
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    ports:
+      - "${API_PORT}:8000"
+    command: "python main.py"
+    env_file:
+      - ../.env
+    volumes:
+      - ../src/:/src/
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

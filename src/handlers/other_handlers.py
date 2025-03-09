@@ -1,6 +1,6 @@
 from aiogram import Router
 from aiogram.types import Message
-from src.lexicon import *
+from lexicon import *
 
 
 other_router = Router()

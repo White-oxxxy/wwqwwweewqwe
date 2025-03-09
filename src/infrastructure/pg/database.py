@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 from typing import AsyncIterable
+
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
     AsyncEngine,
@@ -7,7 +8,7 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
 )
 
-from src.settings import *
+from settings import *
 settings: DevSettings = get_settings()
 
 
@@ -25,9 +26,6 @@ class Database:
             bind=self.engine, autoflush=False, expire_on_commit=True
         )
 
-    @asynccontextmanager
     async def get_session(self) -> AsyncIterable[AsyncSession]:
         async with self.session_maker() as session:
             yield session
-
-database = Database(settings.POSTGRES_URL)

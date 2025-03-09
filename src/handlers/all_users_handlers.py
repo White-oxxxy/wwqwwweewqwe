@@ -4,19 +4,16 @@ from aiogram.fsm.state import default_state
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
-from src.infrastructure.pg.database import database
-from src.filters import IsTag
-from src.lexicon.roles import Roles
-from src.fsm import *
-from src.lexicon import *
-from src.keyboards import *
-from src.infrastructure.repository.user import (
+from lexicon.roles import Roles
+from fsm import *
+from lexicon import *
+from keyboards import *
+from infrastructure.repository.user import (
     UserRepositoryORM,
-    RoleRepositoryORM,
-    TagRepositoryORM,
     TextRepositoryORM,
     TextTagRepositoryORM
 )
+from di.dev import get_container
 
 
 
@@ -27,15 +24,16 @@ all_users_router = Router()
     CommandStart(), StateFilter(default_state)
 )
 async def process_start_command(message: Message) -> None:
-    async with database.get_session() as session:
-        user_repo = UserRepositoryORM(session=session)
+    container = get_container()
+    async with container() as req_container:
+        user_repo = await req_container.get(UserRepositoryORM)
         user = await user_repo.get_by_user_id(message.from_user.id)
         if user:
             await message.answer(
                 text=AllLexicon.answer_start.value, reply_markup=all_users_menu_kb
             )
         else:
-            await UserRepositoryORM(session=session).add_user(
+            await user_repo.add_user(
                 user_id=message.from_user.id, username=message.from_user.username,role_id=Roles.user.value
             )
             await message.answer(
@@ -83,8 +81,9 @@ async def process_search(message: Message) -> None:
     F.text == AllLexicon.button_tag_list.value, StateFilter(default_state)
 )
 async def process_tag_list(message: Message) -> None:
-    async with database.get_session() as session:
-        tag_repo = TagRepositoryORM(session=session)
+    container = get_container()
+    async with container() as req_container:
+        tag_repo = await req_container.get(TextRepositoryORM)
 
         tags = await tag_repo.get_all_tag_names()
 
@@ -135,8 +134,9 @@ async def process_sent_tag(message: Message, state: FSMContext) -> None:
         await state.update_data(
             tag=message.text
         )
-        async with database.get_session() as session:
-            repo = TextTagRepositoryORM(session=session)
+        container = get_container()
+        async with container() as req_container:
+            repo = await req_container.get(TextTagRepositoryORM)
 
 
         await message.answer(
@@ -160,7 +160,7 @@ async def process_word_search(message: Message, state: FSMContext) -> None:
 
 
 @all_users_router.message(
-    StateFilter(FSMTextSearchForm.fill_text), F.text.isalpha()
+    StateFilter(FSMTextSearchForm.fill_text)
 )
 async def process_text_sent(message: Message, state: FSMContext) -> None:
     await state.update_data(

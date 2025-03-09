@@ -1,15 +1,14 @@
 from sqlalchemy import Result, Select, select, BigInteger
 from sqlalchemy.orm import joinedload
-from typing import List
 
-from src.infrastructure.pg.models.user import (
+from infrastructure.pg.models.user import (
     UserORM,
     RoleORM,
     TextORM,
     TagORM,
     TextTagORM,
 )
-from src.infrastructure.repository.base import BaseRepositoryORM
+from infrastructure.repository.base import BaseRepositoryORM
 
 
 class RoleRepositoryORM(BaseRepositoryORM):
@@ -29,7 +28,6 @@ class RoleRepositoryORM(BaseRepositoryORM):
         role: RoleORM = RoleORM(name=name, uploader_id=uploader_id, description=description)
         self.session.add(role)
 
-        await self.session.commit()
         await self.session.refresh(role)
 
         return role
@@ -60,7 +58,6 @@ class UserRepositoryORM(BaseRepositoryORM):
         user: UserORM = UserORM(user_id=user_id, username=username, role_id=role_id)
         self.session.add(user)
 
-        await self.session.commit()
         await self.session.refresh(user)
 
         return user
@@ -81,49 +78,12 @@ class UserRepositoryORM(BaseRepositoryORM):
 
         return user
 
-    async def get_by_role(self, role_id: int) -> List[UserORM]:
+    async def get_by_role(self, role_id: int) -> list[UserORM]:
         stmt: Select[tuple[UserORM]] = select(UserORM).where(UserORM.role_id == role_id)
         result: Result = await self.session.execute(stmt)
-        user: List[UserORM] = list(result.scalars().all())
+        user: list[UserORM] = list(result.scalars().all())
 
         return user
-
-
-class TagRepositoryORM(BaseRepositoryORM):
-    async def get_by_id(self, required_id: int) -> TagORM | None:
-        tag: TagORM | None = await self.session.get(TagORM, required_id)
-
-        return tag
-
-    async def add_tag(self, name: str, uploader_id: int) -> TagORM | None:
-        stmt: Select[tuple[TagORM]] = select(TagORM).where(TagORM.name == name)
-        result: Result = await self.session.execute(stmt)
-        tag: TagORM | None = result.scalar_one_or_none()
-
-        if tag:
-            raise ValueError("Такой тэг уже есть!")
-
-        tag: TagORM = TagORM(name=name, uploader_id=uploader_id)
-        self.session.add(tag)
-
-        await self.session.commit()
-        await self.session.refresh(tag)
-
-        return tag
-
-    async def get_by_tag(self, name: str) -> TagORM | None:
-        stmt: Select[tuple[TagORM]] = select(TagORM).where(TagORM.name == name)
-        result: Result = await self.session.execute(stmt)
-        tag: TagORM | None = result.scalar_one_or_none()
-
-        return tag
-
-    async def get_all_tag_names(self) -> List[TagORM.name]:
-        stmt: Select[tuple[TagORM.name]] = select(TagORM.name)
-        result: Result = await self.session.execute(stmt)
-        tags: List[TagORM.name] = list(result.scalars().all())
-
-        return tags
 
 
 class TextRepositoryORM(BaseRepositoryORM):
@@ -142,20 +102,43 @@ class TextRepositoryORM(BaseRepositoryORM):
         text: TextORM = TextORM(value=value, uploader_id=uploader_id)
         self.session.add(text)
 
-        await self.session.commit()
-        await self.session.refresh(text)
+        await self.session.flush()
 
         return text
+
+    async def add_tag(self, tag: TagORM, text: TextORM) -> TextORM | None:
+        tag: TagORM | None = await self.session.get(TagORM, tag.id)
+        text.tags.append(tag)
+        self.session.add(text)
+
+        await self.session.flush()
+        text = await self.session.refresh(text)
+
+        return text
+
+    async def get_by_tag(self, name: str) -> TagORM | None:
+        stmt: Select[tuple[TagORM]] = select(TagORM).where(TagORM.name == name)
+        result: Result = await self.session.execute(stmt)
+        tag: TagORM | None = result.scalar_one_or_none()
+
+        return tag
 
     async def get_by_value(self, value: str) -> TextORM | None:
         ...
         # в разработке
 
+    async def get_all_tag_names(self) -> list[TagORM.name]:
+        stmt: Select[tuple[TagORM.name]] = select(TagORM.name)
+        result: Result = await self.session.execute(stmt)
+        tags: list[TagORM.name] = list(result.scalars().all())
+
+        return tags
+
 
 class TextTagRepositoryORM(BaseRepositoryORM):
     async def get_by_id(self, required_id: int): ...
 
-    async def get_by_tag(self, name: str) -> List[TextORM] | None:
+    async def get_by_tag(self, name: str) -> list[TextORM] | None:
         stmt = (
             select(TextORM)
             .join(TextTagORM, TextTagORM.text_id == TextORM.id)
@@ -164,7 +147,7 @@ class TextTagRepositoryORM(BaseRepositoryORM):
             .options(joinedload(TextORM.tags))
         )
         result = await self.session.execute(stmt)
-        text: List[TextORM] = list(result.scalars().all())
+        text: list[TextORM] = list(result.scalars().all())
 
         return text
 
