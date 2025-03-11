@@ -3,8 +3,9 @@ from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.state import default_state
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
+from requests import session
 
-from infrastructure.pg.models import TagORM, TextORM
+from infrastructure.pg.models import TagORM, TextORM, TextTagORM
 from lexicon.roles import Roles
 from fsm import *
 from keyboards import *

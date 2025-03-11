@@ -107,12 +107,14 @@ class TextRepositoryORM(BaseRepositoryORM):
         return text
 
     async def add_tag(self, tag: TagORM, text: TextORM) -> TextORM | None:
-        tag: TagORM | None = await self.session.get(TagORM, tag.id)
-        text.tags.append(tag)
-        self.session.add(text)
+        tag = await self.session.merge(tag)
+        text = await self.session.merge(text)
 
+        text.tags.append(tag)
+
+        self.session.add(text)
         await self.session.flush()
-        text = await self.session.refresh(text)
+        await self.session.refresh(text)
 
         return text
 

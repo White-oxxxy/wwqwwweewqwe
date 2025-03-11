@@ -12,7 +12,7 @@ from handlers import *
 async def main() -> None:
     settings: DevSettings = get_settings()
 
-    redis = Redis(host="localhost", port=6379)
+    redis = Redis(host="redis", port=6379)
 
     storage = RedisStorage(redis=redis)
 

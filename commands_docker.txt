@@ -1,1 +1,3 @@
-docker compose -f docker_compose/storages.yaml --env-file .env up --build -d
+docker-compose -f docker_compose/storages.yaml --env-file .env up --build -d
+docker-compose -f docker_compose/app.yaml --env-file .env up --build -d
+docker-compose -f docker_compose/redis.yaml --env-file .env up --build -d
