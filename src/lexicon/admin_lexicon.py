@@ -13,5 +13,6 @@ class AdminLexicon(Enum):
     answer_success_text_added: str = "Текст успешно добавлен!"
     answer_insert_role_name: str = "Введите название роли:"
     answer_insert_role_description: str = "Введите описание роли:"
-    answer_incorrect_role_name: str = "Некорректное имя роли, используйте имя содержащее только буквы."
-
+    answer_incorrect_role_name: str = (
+        "Некорректное имя роли, используйте имя содержащее только буквы."
+    )

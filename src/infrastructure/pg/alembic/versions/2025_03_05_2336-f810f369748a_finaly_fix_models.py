@@ -1,10 +1,11 @@
-"""finaly fix models 
+"""finaly fix models
 
 Revision ID: f810f369748a
 Revises: 5d5e1b82058e
 Create Date: 2025-03-05 23:36:01.880641
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -12,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'f810f369748a'
-down_revision: Union[str, None] = '5d5e1b82058e'
+revision: str = "f810f369748a"
+down_revision: Union[str, None] = "5d5e1b82058e"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

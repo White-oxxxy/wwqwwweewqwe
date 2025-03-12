@@ -11,39 +11,36 @@ from keyboards import *
 from infrastructure.repository.user import (
     UserRepositoryORM,
     TextRepositoryORM,
-    TextTagRepositoryORM
+    TextTagRepositoryORM,
 )
 from di.dev import get_container
-
 
 
 all_users_router = Router()
 
 
-@all_users_router.message(
-    CommandStart(), StateFilter(default_state)
-)
+@all_users_router.message(CommandStart(), StateFilter(default_state))
 async def process_start_command(message: Message) -> None:
     container = get_container()
     async with container() as req_container:
-        user_repo = await req_container.get(UserRepositoryORM)
+        user_repo = await req_container.get(UserRepositoryORM, component="provide_session")
         user = await user_repo.get_by_user_id(message.from_user.id)
         if user:
             await message.answer(
                 text=AllLexicon.answer_start.value, reply_markup=all_users_menu_kb
             )
         else:
-            await user_repo.add_user(
-                user_id=message.from_user.id, username=message.from_user.username,role_id=Roles.user.value
+            await user_repo.create(
+                user_id=message.from_user.id,
+                username=message.from_user.username,
+                role_id=Roles.user.value,
             )
             await message.answer(
                 text=AllLexicon.answer_start.value, reply_markup=all_users_menu_kb
             )
 
 
-@all_users_router.message(
-    Command(commands="help"), StateFilter(default_state)
-)
+@all_users_router.message(Command(commands="help"), StateFilter(default_state))
 async def process_help_command(message: Message) -> None:
     await message.answer(
         text=AllLexicon.answer_help.value, reply_markup=all_users_menu_kb
@@ -83,7 +80,7 @@ async def process_search(message: Message) -> None:
 async def process_tag_list(message: Message) -> None:
     container = get_container()
     async with container() as req_container:
-        tag_repo = await req_container.get(TextRepositoryORM)
+        tag_repo = await req_container.get(TextRepositoryORM, component="provide_read_only_session")
 
         tags = await tag_repo.get_all_tag_names()
 
@@ -93,7 +90,8 @@ async def process_tag_list(message: Message) -> None:
         )
     else:
         await message.answer(
-            text=AllLexicon.answer_empty_tag_list.value, reply_markup=all_users_search_kb
+            text=AllLexicon.answer_empty_tag_list.value,
+            reply_markup=all_users_search_kb,
         )
 
 
@@ -121,31 +119,29 @@ async def process_back_to_search_while_fsm(message: Message, state: FSMContext) 
 )
 async def process_tag_search(message: Message, state: FSMContext) -> None:
     await message.answer(
-        text=AllLexicon.answer_insert_tag.value, reply_markup=all_users_back_to_search_kb,
+        text=AllLexicon.answer_insert_tag.value,
+        reply_markup=all_users_back_to_search_kb,
     )
     await state.set_state(FSMTagSearchForm.fill_tag)
 
 
-@all_users_router.message(
-    StateFilter(FSMTagSearchForm.fill_tag)
-)
+@all_users_router.message(StateFilter(FSMTagSearchForm.fill_tag))
 async def process_sent_tag(message: Message, state: FSMContext) -> None:
     if message.text[0] == AdminLexicon.prefix.value:
-        await state.update_data(
-            tag=message.text
-        )
+        await state.update_data(tag=message.text)
         container = get_container()
         async with container() as req_container:
-            repo = await req_container.get(TextTagRepositoryORM)
-
+            text_tag_repo = await req_container.get(TextTagRepositoryORM, component="provide_read_only_session")
 
         await message.answer(
-            text=AllLexicon.answer_result.value, reply_markup=all_users_text_showing_interaction_kb
+            text=AllLexicon.answer_result.value,
+            reply_markup=all_users_text_showing_interaction_kb,
         )
         await state.clear()
     else:
         await message.answer(
-            text=AllLexicon.answer_if_incorrect_prefix.value, reply_markup=all_users_back_to_search_kb
+            text=AllLexicon.answer_if_incorrect_prefix.value,
+            reply_markup=all_users_back_to_search_kb,
         )
 
 
@@ -154,20 +150,21 @@ async def process_sent_tag(message: Message, state: FSMContext) -> None:
 )
 async def process_word_search(message: Message, state: FSMContext) -> None:
     await message.answer(
-        text=AllLexicon.answer_insert_word.value, reply_markup=all_users_back_to_search_kb,
+        text=AllLexicon.answer_insert_word.value,
+        reply_markup=all_users_back_to_search_kb,
     )
     await state.set_state(FSMTextSearchForm.fill_text)
 
 
-@all_users_router.message(
-    StateFilter(FSMTextSearchForm.fill_text)
-)
+@all_users_router.message(StateFilter(FSMTextSearchForm.fill_text))
 async def process_text_sent(message: Message, state: FSMContext) -> None:
-    await state.update_data(
-        text=message.text
-    )
+    await state.update_data(text=message.text)
+    container = get_container()
+    async with container() as req_container:
+        text_tag_repo = await req_container.get(TextTagRepositoryORM, component="provide_read_only_session")
+
     await state.clear()
     await message.answer(
-        text=AllLexicon.answer_result.value, reply_markup=all_users_text_showing_interaction_kb
+        text=AllLexicon.answer_result.value,
+        reply_markup=all_users_text_showing_interaction_kb,
     )
-

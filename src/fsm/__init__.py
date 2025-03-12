@@ -1,8 +1,4 @@
-from .fsm import (
-    FSMAddForm,
-    FSMTagSearchForm,
-    FSMTextSearchForm
-)
+from .fsm import FSMAddForm, FSMTagSearchForm, FSMTextSearchForm
 
 from .fsm import FSMTagSearchForm, FSMTextSearchForm
 

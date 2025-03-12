@@ -28,9 +28,7 @@ class TextORM(BaseORM, TimeMixin, IdPkMixin):
     __tablename__ = "texts"  # noqa
 
     value: Mapped[str] = mapped_column(nullable=False)
-    uploader_id: Mapped[int] = mapped_column(
-        BigInteger, nullable=False
-    )
+    uploader_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
 
     tags: Mapped[list["TagORM"]] = relationship(
         secondary="tag_text",
@@ -42,13 +40,10 @@ class TagORM(BaseORM, TimeMixin, IdPkMixin):
     __tablename__ = "tags"  # noqa
 
     name: Mapped[str] = mapped_column(nullable=False)
-    uploader_id: Mapped[int] = mapped_column(
-        BigInteger, nullable=False
-    )
+    uploader_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
 
     texts: Mapped[list["TextORM"]] = relationship(
-        secondary="tag_text",
-        back_populates="tags"
+        secondary="tag_text", back_populates="tags"
     )
 
 
