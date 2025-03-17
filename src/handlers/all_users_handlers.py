@@ -23,21 +23,18 @@ all_users_router = Router()
 async def process_start_command(message: Message) -> None:
     container = get_container()
     async with container() as req_container:
-        user_repo = await req_container.get(UserRepositoryORM, component="provide_session")
+        await message.answer(
+            text=AllLexicon.answer_start.value, reply_markup=all_users_menu_kb
+        )
+        user_repo = await req_container.get(UserRepositoryORM)
         user = await user_repo.get_by_user_id(message.from_user.id)
-        if user:
-            await message.answer(
-                text=AllLexicon.answer_start.value, reply_markup=all_users_menu_kb
-            )
-        else:
+        if user is None:
             await user_repo.create(
                 user_id=message.from_user.id,
                 username=message.from_user.username,
                 role_id=Roles.user.value,
             )
-            await message.answer(
-                text=AllLexicon.answer_start.value, reply_markup=all_users_menu_kb
-            )
+            await user_repo.session.commit()
 
 
 @all_users_router.message(Command(commands="help"), StateFilter(default_state))
@@ -80,7 +77,7 @@ async def process_search(message: Message) -> None:
 async def process_tag_list(message: Message) -> None:
     container = get_container()
     async with container() as req_container:
-        tag_repo = await req_container.get(TextRepositoryORM, component="provide_read_only_session")
+        tag_repo = await req_container.get(TextRepositoryORM)
 
         tags = await tag_repo.get_all_tag_names()
 
@@ -128,21 +125,36 @@ async def process_tag_search(message: Message, state: FSMContext) -> None:
 @all_users_router.message(StateFilter(FSMTagSearchForm.fill_tag))
 async def process_sent_tag(message: Message, state: FSMContext) -> None:
     if message.text[0] == AdminLexicon.prefix.value:
-        await state.update_data(tag=message.text)
         container = get_container()
+        await state.update_data(tag=message.text)
+        await state.set_state(FSMTagSearchForm.text_interaction)
         async with container() as req_container:
-            text_tag_repo = await req_container.get(TextTagRepositoryORM, component="provide_read_only_session")
-
-        await message.answer(
-            text=AllLexicon.answer_result.value,
-            reply_markup=all_users_text_showing_interaction_kb,
-        )
-        await state.clear()
+            text_tag_repo: TextTagRepositoryORM = await req_container.get(
+                TextTagRepositoryORM
+            )
+            data = await state.get_data()
+            texts = await text_tag_repo.get_by_tag(data["tag"])
+            await state.update_data(texts=texts)
     else:
         await message.answer(
             text=AllLexicon.answer_if_incorrect_prefix.value,
             reply_markup=all_users_back_to_search_kb,
         )
+
+
+@all_users_router.message(StateFilter(FSMTagSearchForm.text_interaction))
+async def process_text_interaction_after_tag(message: Message, state: FSMContext):
+    data = await state.get_data()
+    await message.answer(
+        text=data["texts"][0], reply_markup=all_users_text_showing_interaction_kb
+    )
+
+
+@all_users_router.message(
+    F.text == AllLexicon.button_next.value,
+    StateFilter(FSMTagSearchForm.text_interaction),
+)
+async def process_button_next_in_tag_fsm(message: Message, state: FSMContext): ...
 
 
 @all_users_router.message(
@@ -159,12 +171,4 @@ async def process_word_search(message: Message, state: FSMContext) -> None:
 @all_users_router.message(StateFilter(FSMTextSearchForm.fill_text))
 async def process_text_sent(message: Message, state: FSMContext) -> None:
     await state.update_data(text=message.text)
-    container = get_container()
-    async with container() as req_container:
-        text_tag_repo = await req_container.get(TextTagRepositoryORM, component="provide_read_only_session")
-
-    await state.clear()
-    await message.answer(
-        text=AllLexicon.answer_result.value,
-        reply_markup=all_users_text_showing_interaction_kb,
-    )
+    await state.set_state(FSMTextSearchForm.text_interaction)

@@ -8,7 +8,9 @@ class FSMAddForm(StatesGroup):
 
 class FSMTagSearchForm(StatesGroup):
     fill_tag = State()
+    text_interaction = State()
 
 
 class FSMTextSearchForm(StatesGroup):
     fill_text = State()
+    text_interaction = State()

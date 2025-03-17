@@ -4,7 +4,7 @@ from aiogram.fsm.state import default_state
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
-from infrastructure.pg.models import TagORM, TextORM, TextTagORM
+from infrastructure.pg.models import TagORM, TextORM
 from lexicon.roles import Roles
 from fsm import *
 from keyboards import *
@@ -28,9 +28,7 @@ admin_router = Router()
 async def process_command_start(message: Message) -> None:
     container = get_container()
     async with container() as req_container:
-        user_repository = await req_container.get(
-            UserRepositoryORM, component="provide_session"
-        )
+        user_repository = await req_container.get(UserRepositoryORM)
 
         user = await user_repository.get_by_user_id(message.from_user.id)
         if user:
@@ -108,20 +106,18 @@ async def process_insert_text(message: Message, state: FSMContext) -> None:
     await state.update_data(text=message.text)
     container = get_container()
     async with container() as req_container:
-        text_repo: TextRepositoryORM = await req_container.get(
-            TextRepositoryORM, component="provide_session"
-        )
+        text_repo: TextRepositoryORM = await req_container.get(TextRepositoryORM)
         data = await state.get_data()
 
-        tag: TagORM | None = await text_repo.get_by_tag(name=data.get("tag"))
+        tag: TagORM | None = await text_repo.get_by_name(name=data.get("tag"))
         if tag is None:
             tag: TagORM = TagORM(name=data.get("tag"), uploader_id=message.from_user.id)
 
-        text: TextORM = await text_repo.add_text(
+        text: TextORM = await text_repo.create_text(
             value=data.get("text"), uploader_id=message.from_user.id
         )
 
-        await text_repo.add_tag(tag, text)
+        await text_repo.create_tag(tag, text.id)
         await text_repo.session.commit()
 
     await message.answer(

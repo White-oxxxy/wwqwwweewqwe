@@ -30,6 +30,7 @@ target_metadata = BaseORM.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 settings = get_settings()
+print(f"Using database URL: {settings.POSTGRES_URL}")
 config.set_main_option("sqlalchemy.url", settings.POSTGRES_URL)
 
 

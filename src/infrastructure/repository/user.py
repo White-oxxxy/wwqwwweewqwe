@@ -1,5 +1,5 @@
 from sqlalchemy import Result, Select, select
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
 
 from infrastructure.pg.models.user import (
     UserORM,
@@ -19,7 +19,6 @@ class RoleRepositoryORM(BaseRepositoryORM):
     async def create(self, name: str, uploader_id: int, description: str) -> RoleORM:
         role = RoleORM(name=name, uploader_id=uploader_id, description=description)
         self.session.add(role)
-        await self.session.refresh(role)
 
         return role
 
@@ -43,7 +42,6 @@ class UserRepositoryORM(BaseRepositoryORM):
     async def create(self, user_id: int, username: str, role_id: int) -> UserORM:
         user = UserORM(user_id=user_id, username=username, role_id=role_id)
         self.session.add(user)
-        await self.session.refresh(user)
 
         return user
 
@@ -72,18 +70,29 @@ class TextRepositoryORM(BaseRepositoryORM):
     async def create_text(self, value: str, uploader_id: int) -> TextORM:
         text = TextORM(value=value, uploader_id=uploader_id)
         self.session.add(text)
-        await self.session.refresh(text)
+        await self.session.flush()
 
         return text
 
-    async def create_tag(self, tag: TagORM, text: TextORM) -> TextORM:
-        tag: TagORM | None = await self.session.get(TagORM, tag.id)
-        text: TextORM | None = await self.session.get(TextORM, text.id)
-
-        text.tags.append(tag)
-        self.session.add(text)
+    async def create_tag(self, tag: TagORM, text_id: int) -> TextORM:
+        stmt: Select[tuple[TextORM]] = select(TextORM).where(TextORM.id == text_id).options(selectinload(TextORM.tags))
+        result: Result = await self.session.execute(stmt)
+        text: TextORM | None = result.scalars().first()
+        if text:
+            if tag.id is None:
+                self.session.add(tag)
+            text.tags.append(tag)
+            self.session.add(text)
 
         return text
+
+    async def get_by_name(self, name: str) -> TagORM | None:
+        stmt: Select[tuple[TagORM]] = select(TagORM).where(TagORM.name == name)
+        tag: TagORM | None = await self.session.scalar(stmt)
+        if not tag:
+            return None
+
+        return tag
 
     async def get_all_tag_names(self) -> list[TagORM.name]:
         stmt: Select[tuple[TagORM.name]] = select(TagORM.name)

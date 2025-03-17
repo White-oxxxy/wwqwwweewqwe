@@ -33,39 +33,16 @@ class DatabaseProvider(Provider):
         )
 
     @provide(scope=Scope.APP)
-    async def create_read_only_async_engine(
-        self, settings: CommonSettings
-    ) -> AsyncEngine:
-        return create_async_engine(
-            url=settings.POSTGRES_URL, isolation_level="AUTOCOMMIT"
-        )
-
-    @provide(scope=Scope.APP)
     async def create_session_maker(
         self, engine: AsyncEngine
     ) -> async_sessionmaker[AsyncSession]:
         return async_sessionmaker(bind=engine, autoflush=True, expire_on_commit=False)
-
-    @provide(scope=Scope.APP)
-    async def create_read_only_session_maker(
-        self, create_read_only_async_engine: AsyncEngine
-    ) -> async_sessionmaker[AsyncSession]:
-        return async_sessionmaker(
-            bind=create_read_only_async_engine, autoflush=True, expire_on_commit=False
-        )
 
     @provide(scope=Scope.REQUEST, provides=AsyncSession)
     async def provide_session(
         self, create_session_maker: async_sessionmaker[AsyncSession]
     ) -> AsyncIterable[AsyncSession]:
         async with create_session_maker() as session:
-            yield session
-
-    @provide(scope=Scope.REQUEST, provides=AsyncSession)
-    async def provide_read_only_session(
-        self, create_read_only_session_maker: async_sessionmaker[AsyncSession]
-    ) -> AsyncIterable[AsyncSession]:
-        async with create_read_only_session_maker() as session:
             yield session
 
 
