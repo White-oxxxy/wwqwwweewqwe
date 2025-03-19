@@ -31,3 +31,4 @@ class AllLexicon(Enum):
     answer_menu: str = "Вы в главном меню."
     answer_result: str = "Результат поиска:"
     answer_empty_tag_list: str = "Пока еще нет тэгов"
+    answer_result_not_found: str = "Ничего не найдено!"

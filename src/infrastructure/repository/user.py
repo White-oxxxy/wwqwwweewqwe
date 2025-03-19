@@ -114,7 +114,7 @@ class TextTagRepositoryORM(BaseRepositoryORM):
             .options(joinedload(TextORM.tags))
         )
         result = await self.session.execute(stmt)
-        text: list[TextORM] = list(result.scalars().all())
+        text: list[TextORM] = list(result.unique().scalars().all())
 
         return text
 
