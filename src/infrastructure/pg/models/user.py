@@ -11,7 +11,9 @@ class RoleORM(BaseORM, TimeMixin, IdPkMixin):
     name: Mapped[str] = mapped_column(nullable=False)
     description: Mapped[str] = mapped_column()
 
-    user: Mapped[list["UserORM"]] = relationship(back_populates="role", lazy="raise_on_sql")
+    user: Mapped[list["UserORM"]] = relationship(
+        back_populates="role", lazy="raise_on_sql"
+    )
 
 
 class UserORM(BaseORM, TimeMixin, IdPkMixin):
@@ -31,9 +33,7 @@ class TextORM(BaseORM, TimeMixin, IdPkMixin):
     uploader_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
 
     tags: Mapped[list["TagORM"]] = relationship(
-        secondary="tag_text",
-        back_populates="texts",
-        lazy="selectin"
+        secondary="tag_text", back_populates="texts", lazy="selectin"
     )
 
 
@@ -44,9 +44,7 @@ class TagORM(BaseORM, TimeMixin, IdPkMixin):
     uploader_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
 
     texts: Mapped[list["TextORM"]] = relationship(
-        secondary="tag_text",
-        back_populates="tags",
-        lazy="selectin"
+        secondary="tag_text", back_populates="tags", lazy="selectin"
     )
 
 

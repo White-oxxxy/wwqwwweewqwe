@@ -75,7 +75,11 @@ class TextRepositoryORM(BaseRepositoryORM):
         return text
 
     async def create_tag(self, tag: TagORM, text_id: int) -> TextORM:
-        stmt: Select[tuple[TextORM]] = select(TextORM).where(TextORM.id == text_id).options(selectinload(TextORM.tags))
+        stmt: Select[tuple[TextORM]] = (
+            select(TextORM)
+            .where(TextORM.id == text_id)
+            .options(selectinload(TextORM.tags))
+        )
         result: Result = await self.session.execute(stmt)
         text: TextORM | None = result.scalars().first()
         if text:

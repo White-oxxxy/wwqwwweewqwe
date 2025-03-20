@@ -139,10 +139,17 @@ async def process_sent_tag(message: Message, state: FSMContext) -> None:
                 await state.update_data(text=to_dict(texts))
                 await state.update_data(pages=len(texts))
                 await state.update_data(current_page=0)
+
+                data = await state.get_data()
+
+                await message.answer(
+                    text=data["text"][str(data["current_page"])]["value"],
+                    reply_markup=all_users_text_showing_interaction_kb,
+                )
             else:
                 await message.answer(
                     text=AllLexicon.answer_result_not_found.value,
-                    reply_markup=all_users_search_kb
+                    reply_markup=all_users_search_kb,
                 )
                 await state.clear()
     else:
@@ -152,48 +159,57 @@ async def process_sent_tag(message: Message, state: FSMContext) -> None:
         )
 
 
-@all_users_router.message(StateFilter(FSMTagSearchForm.text_interaction))
-async def process_first_time_text_showing(message: Message, state: FSMContext) -> None:
-    data = await state.get_data()
-    await message.answer(
-        text=data["text"][data["current_page"]]["value"],
-        reply_markup=all_users_text_showing_interaction_kb
-    )
-
-
 @all_users_router.message(
     F.text == AllLexicon.button_next.value,
     StateFilter(FSMTagSearchForm.text_interaction),
 )
 async def process_button_next_in_tag_fsm(message: Message, state: FSMContext) -> None:
     data = await state.get_data()
-    if data["current_page"] + 1 <= data["pages"]:
+    if data["current_page"] + 1 <= data["pages"] - 1:
         await state.update_data(current_page=data["current_page"] + 1)
+
+        data = await state.get_data()
+
         await message.answer(
-            text=data["text"][data["current_page"]]["value"], reply_markup=all_users_text_showing_interaction_kb
+            text=data["text"][str(data["current_page"])]["value"],
+            reply_markup=all_users_text_showing_interaction_kb,
         )
     else:
         await state.update_data(current_page=0)
+
+        data = await state.get_data()
+
         await message.answer(
-            text=data["text"][data["current_page"]]["value"], reply_markup=all_users_text_showing_interaction_kb
+            text=data["text"][str(data["current_page"])]["value"],
+            reply_markup=all_users_text_showing_interaction_kb,
         )
+
 
 @all_users_router.message(
     F.text == AllLexicon.button_back.value,
-    StateFilter(FSMTagSearchForm.text_interaction)
+    StateFilter(FSMTagSearchForm.text_interaction),
 )
 async def process_button_back_in_tag_fsm(message: Message, state: FSMContext) -> None:
     data = await state.get_data()
     if data["current_page"] - 1 >= 0:
         await state.update_data(current_page=data["current_page"] - 1)
+
+        data = await state.get_data()
+
         await message.answer(
-            text=data["text"][data["current_page"]]["value"], reply_markup=all_users_text_showing_interaction_kb
+            text=data["text"][str(data["current_page"])]["value"],
+            reply_markup=all_users_text_showing_interaction_kb,
         )
     else:
-        await state.update_data(current_page=data["pages"])
+        await state.update_data(current_page=data["pages"] - 1)
+
+        data = await state.get_data()
+
         await message.answer(
-            text=data["text"][data["current_page"]]["value"], reply_markup=all_users_text_showing_interaction_kb
+            text=data["text"][str(data["current_page"])]["value"],
+            reply_markup=all_users_text_showing_interaction_kb,
         )
+
 
 @all_users_router.message(
     F.text == AllLexicon.button_text_search.value, StateFilter(default_state)
@@ -208,5 +224,81 @@ async def process_word_search(message: Message, state: FSMContext) -> None:
 
 @all_users_router.message(StateFilter(FSMTextSearchForm.fill_text))
 async def process_text_sent(message: Message, state: FSMContext) -> None:
-    await state.update_data(text=message.text)
+    container = get_container()
+    await state.update_data(word=message.text)
     await state.set_state(FSMTextSearchForm.text_interaction)
+    async with container() as req_container:
+        text_tag_repo: TextTagRepositoryORM = await req_container.get(
+            TextTagRepositoryORM
+        )
+        data = await state.get_data()
+        texts = await text_tag_repo.get_by_text(data["word"])
+        if len(texts) > 0:
+            await state.update_data(text=to_dict(texts))
+            await state.update_data(pages=len(texts))
+            await state.update_data(current_page=0)
+
+            data = await state.get_data()
+
+            await message.answer(
+                text=data["text"][str(data["current_page"])]["value"],
+                reply_markup=all_users_text_showing_interaction_kb,
+            )
+        else:
+            await message.answer(
+                text=AllLexicon.answer_result_not_found.value,
+                reply_markup=all_users_search_kb,
+            )
+            await state.clear()
+
+
+@all_users_router.message(
+    StateFilter(FSMTextSearchForm.text_interaction),
+    F.text == AllLexicon.button_next.value,
+)
+async def process_button_next_in_text_fsm(message: Message, state: FSMContext) -> None:
+    data = await state.get_data()
+    if data["current_page"] + 1 <= data["pages"] - 1:
+        await state.update_data(current_page=data["current_page"] + 1)
+
+        data = await state.get_data()
+
+        await message.answer(
+            text=data["text"][str(data["current_page"])]["value"],
+            reply_markup=all_users_text_showing_interaction_kb,
+        )
+    else:
+        await state.update_data(current_page=0)
+
+        data = await state.get_data()
+
+        await message.answer(
+            text=data["text"][str(data["current_page"])]["value"],
+            reply_markup=all_users_text_showing_interaction_kb,
+        )
+
+
+@all_users_router.message(
+    StateFilter(FSMTextSearchForm.text_interaction),
+    F.text == AllLexicon.button_back.value,
+)
+async def process_button_back_in_text_fsm(message: Message, state: FSMContext) -> None:
+    data = await state.get_data()
+    if data["current_page"] - 1 >= 0:
+        await state.update_data(current_page=data["current_page"] - 1)
+
+        data = await state.get_data()
+
+        await message.answer(
+            text=data["text"][str(data["current_page"])]["value"],
+            reply_markup=all_users_text_showing_interaction_kb,
+        )
+    else:
+        await state.update_data(current_page=data["pages"] - 1)
+
+        data = await state.get_data()
+
+        await message.answer(
+            text=data["text"][str(data["current_page"])]["value"],
+            reply_markup=all_users_text_showing_interaction_kb,
+        )
