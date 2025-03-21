@@ -34,7 +34,8 @@ async def process_command_start(message: Message) -> None:
         user = await user_repository.get_by_user_id(message.from_user.id)
         if user:
             await message.answer(
-                text=AllLexicon.answer_start.value, reply_markup=UserKeyboards.create_admin_menu_kb()
+                text=AllLexicon.answer_start.value,
+                reply_markup=UserKeyboards.create_admin_menu_kb(),
             )
         else:
             await user_repository.create(
@@ -44,7 +45,8 @@ async def process_command_start(message: Message) -> None:
             )
             await user_repository.session.commit()
             await message.answer(
-                text=AllLexicon.answer_start.value, reply_markup=UserKeyboards.create_admin_menu_kb()
+                text=AllLexicon.answer_start.value,
+                reply_markup=UserKeyboards.create_admin_menu_kb(),
             )
 
 
@@ -52,7 +54,10 @@ async def process_command_start(message: Message) -> None:
     IsAdmin(admin_ids), Command(commands="help"), StateFilter(default_state)
 )
 async def process_command_help(message: Message) -> None:
-    await message.answer(text=AllLexicon.answer_help.value, reply_markup=UserKeyboards.create_admin_menu_kb())
+    await message.answer(
+        text=AllLexicon.answer_help.value,
+        reply_markup=UserKeyboards.create_admin_menu_kb(),
+    )
 
 
 @admin_router.message(
@@ -61,7 +66,10 @@ async def process_command_help(message: Message) -> None:
     StateFilter(default_state),
 )
 async def process_button_menu(message: Message) -> None:
-    await message.answer(text=AllLexicon.answer_menu.value, reply_markup=UserKeyboards.create_admin_menu_kb())
+    await message.answer(
+        text=AllLexicon.answer_menu.value,
+        reply_markup=UserKeyboards.create_admin_menu_kb(),
+    )
 
 
 @admin_router.message(
@@ -70,7 +78,10 @@ async def process_button_menu(message: Message) -> None:
     ~StateFilter(default_state),
 )
 async def process_button_menu_while_fsm(message: Message, state: FSMContext) -> None:
-    await message.answer(text=AllLexicon.answer_menu.value, reply_markup=UserKeyboards.create_admin_menu_kb())
+    await message.answer(
+        text=AllLexicon.answer_menu.value,
+        reply_markup=UserKeyboards.create_admin_menu_kb(),
+    )
     await state.clear()
 
 
@@ -82,7 +93,8 @@ async def process_button_menu_while_fsm(message: Message, state: FSMContext) -> 
 async def process_button_add_text(message: Message, state: FSMContext) -> None:
     await state.set_state(FSMAddForm.insert_tags)
     await message.answer(
-        text=AdminLexicon.answer_insert_tag.value, reply_markup=UserKeyboards.create_back_menu_kb()
+        text=AdminLexicon.answer_insert_tag.value,
+        reply_markup=UserKeyboards.create_back_menu_kb(),
     )
 
 
@@ -115,7 +127,9 @@ async def process_insert_text(message: Message, state: FSMContext) -> None:
             for tag_name in data.get("tags"):
                 tag: TagORM | None = await text_repo.get_tag_by_name(name=tag_name)
                 if not tag:
-                    tag: TagORM = TagORM(name=tag_name, uploader_id=message.from_user.id)
+                    tag: TagORM = TagORM(
+                        name=tag_name, uploader_id=message.from_user.id
+                    )
                 text: TextORM | None = await text_repo.get_text(value=data.get("text"))
                 if not text:
                     text: TextORM = await text_repo.create_text(
@@ -126,9 +140,13 @@ async def process_insert_text(message: Message, state: FSMContext) -> None:
                     await text_repo.add_tag(tag, text.id)
                 await text_repo.session.commit()
         else:
-            tag: TagORM | None = await text_repo.get_tag_by_name(name=data.get("tags")[0])
+            tag: TagORM | None = await text_repo.get_tag_by_name(
+                name=data.get("tags")[0]
+            )
             if not tag:
-                tag: TagORM = TagORM(name=data.get("tags")[0], uploader_id=message.from_user.id)
+                tag: TagORM = TagORM(
+                    name=data.get("tags")[0], uploader_id=message.from_user.id
+                )
 
             text: TextORM = await text_repo.create_text(
                 value=data.get("text"), uploader_id=message.from_user.id
@@ -138,6 +156,7 @@ async def process_insert_text(message: Message, state: FSMContext) -> None:
             await text_repo.session.commit()
 
     await message.answer(
-        text=AdminLexicon.answer_success_text_added.value, reply_markup=UserKeyboards.create_admin_menu_kb()
+        text=AdminLexicon.answer_success_text_added.value,
+        reply_markup=UserKeyboards.create_admin_menu_kb(),
     )
     await state.clear()

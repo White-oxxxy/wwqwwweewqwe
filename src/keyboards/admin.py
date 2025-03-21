@@ -5,6 +5,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from lexicon import *
 
+
 @dataclass
 class AdminKeyboards:
     @staticmethod
@@ -15,11 +16,8 @@ class AdminKeyboards:
             KeyboardButton(text=AllLexicon.button_help.value),
         ]
         kb_builder = ReplyKeyboardBuilder()
-        kb_builder.row(
-            *buttons, width=3
-        )
+        kb_builder.row(*buttons, width=3)
         kb: ReplyKeyboardMarkup = kb_builder.as_markup(
             one_type_keyboard=True, resize_keyboard=True
         )
         return kb
-

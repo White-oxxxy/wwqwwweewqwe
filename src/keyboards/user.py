@@ -15,9 +15,7 @@ class UserKeyboards(AdminKeyboards):
             KeyboardButton(text=AllLexicon.button_help.value),
         ]
         kb_builder = ReplyKeyboardBuilder()
-        kb_builder.row(
-            *buttons, width=2
-        )
+        kb_builder.row(*buttons, width=2)
         kb: ReplyKeyboardMarkup = kb_builder.as_markup(
             one_type_keyboard=True, resize_keyboard=True
         )
@@ -32,9 +30,7 @@ class UserKeyboards(AdminKeyboards):
             KeyboardButton(text=AllLexicon.button_menu.value),
         ]
         kb_builder = ReplyKeyboardBuilder()
-        kb_builder.row(
-            *buttons, width=4
-        )
+        kb_builder.row(*buttons, width=4)
         kb: ReplyKeyboardMarkup = kb_builder.as_markup(
             one_type_keyboard=True, resize_keyboard=True
         )
@@ -46,9 +42,7 @@ class UserKeyboards(AdminKeyboards):
             KeyboardButton(text=AllLexicon.button_back.value),
         ]
         kb_builder = ReplyKeyboardBuilder()
-        kb_builder.row(
-            *buttons, width=1
-        )
+        kb_builder.row(*buttons, width=1)
         kb: ReplyKeyboardMarkup = kb_builder.as_markup(
             one_type_keyboard=True, resize_keyboard=True
         )
@@ -60,9 +54,7 @@ class UserKeyboards(AdminKeyboards):
             KeyboardButton(text=AllLexicon.button_menu.value),
         ]
         kb_builder = ReplyKeyboardBuilder()
-        kb_builder.row(
-            *buttons, width=1
-        )
+        kb_builder.row(*buttons, width=1)
         kb: ReplyKeyboardMarkup = kb_builder.as_markup(
             one_type_keyboard=True, resize_keyboard=True
         )
@@ -74,9 +66,7 @@ class UserKeyboards(AdminKeyboards):
             KeyboardButton(text=AllLexicon.button_back_to_search.value),
         ]
         kb_builder = ReplyKeyboardBuilder()
-        kb_builder.row(
-            *buttons, width=1
-        )
+        kb_builder.row(*buttons, width=1)
         kb: ReplyKeyboardMarkup = kb_builder.as_markup(
             one_type_keyboard=True, resize_keyboard=True
         )
@@ -90,9 +80,7 @@ class UserKeyboards(AdminKeyboards):
             KeyboardButton(text=AllLexicon.button_back_to_search.value),
         ]
         kb_builder = ReplyKeyboardBuilder()
-        kb_builder.row(
-            *buttons, width=3
-        )
+        kb_builder.row(*buttons, width=3)
         kb: ReplyKeyboardMarkup = kb_builder.as_markup(
             one_type_keyboard=True, resize_keyboard=True
         )

@@ -25,7 +25,8 @@ async def process_start_command(message: Message) -> None:
     container = get_container()
     async with container() as req_container:
         await message.answer(
-            text=AllLexicon.answer_start.value, reply_markup=UserKeyboards.create_user_menu_kb()
+            text=AllLexicon.answer_start.value,
+            reply_markup=UserKeyboards.create_user_menu_kb(),
         )
         user_repo = await req_container.get(UserRepositoryORM)
         user = await user_repo.get_by_user_id(message.from_user.id)
@@ -41,7 +42,8 @@ async def process_start_command(message: Message) -> None:
 @all_users_router.message(Command(commands="help"), StateFilter(default_state))
 async def process_help_command(message: Message) -> None:
     await message.answer(
-        text=AllLexicon.answer_help.value, reply_markup=UserKeyboards.create_user_menu_kb()
+        text=AllLexicon.answer_help.value,
+        reply_markup=UserKeyboards.create_user_menu_kb(),
     )
 
 
@@ -50,7 +52,8 @@ async def process_help_command(message: Message) -> None:
 )
 async def process_button_help(message: Message) -> None:
     await message.answer(
-        text=AllLexicon.answer_help.value, reply_markup=UserKeyboards.create_back_menu_kb()
+        text=AllLexicon.answer_help.value,
+        reply_markup=UserKeyboards.create_back_menu_kb(),
     )
 
 
@@ -59,7 +62,8 @@ async def process_button_help(message: Message) -> None:
 )
 async def process_button_menu(message: Message) -> None:
     await message.answer(
-        text=AllLexicon.answer_menu.value, reply_markup=UserKeyboards.create_user_menu_kb()
+        text=AllLexicon.answer_menu.value,
+        reply_markup=UserKeyboards.create_user_menu_kb(),
     )
 
 
@@ -68,7 +72,8 @@ async def process_button_menu(message: Message) -> None:
 )
 async def process_search(message: Message) -> None:
     await message.answer(
-        text=AllLexicon.answer_search.value, reply_markup=UserKeyboards.create_search_kb()
+        text=AllLexicon.answer_search.value,
+        reply_markup=UserKeyboards.create_search_kb(),
     )
 
 
@@ -98,7 +103,8 @@ async def process_tag_list(message: Message) -> None:
 )
 async def process_back_to_search(message: Message) -> None:
     await message.answer(
-        text=AllLexicon.answer_search.value, reply_markup=UserKeyboards.create_search_kb()
+        text=AllLexicon.answer_search.value,
+        reply_markup=UserKeyboards.create_search_kb(),
     )
 
 
@@ -107,7 +113,8 @@ async def process_back_to_search(message: Message) -> None:
 )
 async def process_back_to_search_while_fsm(message: Message, state: FSMContext) -> None:
     await message.answer(
-        text=AllLexicon.answer_search.value, reply_markup=UserKeyboards.create_search_kb()
+        text=AllLexicon.answer_search.value,
+        reply_markup=UserKeyboards.create_search_kb(),
     )
     await state.clear()
 
