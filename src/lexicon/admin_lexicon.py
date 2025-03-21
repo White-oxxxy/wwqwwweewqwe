@@ -16,3 +16,4 @@ class AdminLexicon(Enum):
     answer_incorrect_role_name: str = (
         "Некорректное имя роли, используйте имя содержащее только буквы."
     )
+    answer_insert_tag: str = "Введите тэг: (Если тэгов несколько введите их через запятую)"

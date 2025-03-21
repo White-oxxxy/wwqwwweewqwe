@@ -74,7 +74,15 @@ class TextRepositoryORM(BaseRepositoryORM):
 
         return text
 
-    async def create_tag(self, tag: TagORM, text_id: int) -> TextORM:
+    async def get_text(self, value: str) -> TextORM | None:
+        stmt: Select[tuple[TextORM]] = select(TextORM).where(TextORM.value == value)
+        text: TextORM | None = await self.session.scalar(stmt)
+        if not text:
+            return None
+
+        return text
+
+    async def add_tag(self, tag: TagORM, text_id: int) -> TextORM | None:
         stmt: Select[tuple[TextORM]] = (
             select(TextORM)
             .where(TextORM.id == text_id)
@@ -83,14 +91,26 @@ class TextRepositoryORM(BaseRepositoryORM):
         result: Result = await self.session.execute(stmt)
         text: TextORM | None = result.scalars().first()
         if text:
-            if tag.id is None:
-                self.session.add(tag)
             text.tags.append(tag)
             self.session.add(text)
 
         return text
 
-    async def get_by_name(self, name: str) -> TagORM | None:
+    async def add_tags(self, tags: list[TagORM], text_id: int) -> TextORM | None:
+        stmt: Select[tuple[TextORM]] = (
+            select(TextORM)
+            .where(TextORM.id == text_id)
+            .options(selectinload(TextORM.tags))
+        )
+        result: Result = await self.session.execute(stmt)
+        text: TextORM | None = result.scalars().first()
+        if text:
+            text.tags.extend(tags)
+            self.session.add(text)
+
+        return text
+
+    async def get_tag_by_name(self, name: str) -> TagORM | None:
         stmt: Select[tuple[TagORM]] = select(TagORM).where(TagORM.name == name)
         tag: TagORM | None = await self.session.scalar(stmt)
         if not tag:
@@ -109,7 +129,7 @@ class TextRepositoryORM(BaseRepositoryORM):
 class TextTagRepositoryORM(BaseRepositoryORM):
     async def get_by_id(self, required_id: int): ...
 
-    async def get_by_tag(self, name: str) -> list[TextORM] | None:
+    async def get_by_tag(self, name: str) -> list[TextORM]:
         stmt = (
             select(TextORM)
             .join(TextTagORM, TextTagORM.text_id == TextORM.id)

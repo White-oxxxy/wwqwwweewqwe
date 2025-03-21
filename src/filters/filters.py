@@ -2,12 +2,11 @@ from dataclasses import dataclass
 
 from aiogram.types import Message
 from aiogram.filters import BaseFilter
-from typing import List
 
 
 @dataclass
 class IsAdmin(BaseFilter):
-    admins: List[int]
+    admins: list[int]
 
     async def __call__(self, message: Message) -> bool:
         return message.from_user.id in self.admins

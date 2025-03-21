@@ -22,7 +22,7 @@ class AllLexicon(Enum):
     answer_search: str = (
         "Выберите как провести поиск. Так же можете посмотреть список доступных тэгов."
     )
-    answer_if_incorrect_prefix: str = "Ошибка в префиксе!"
+    answer_if_incorrect_prefix: str = "Ошибка в префиксе и должны быть разделены запятыми! (Все должны начинаться с символа #)"
     answer_insert_tag: str = "Введите тэг:"
     answer_insert_word: str = "Введите слово или предложение из искомого текста:"
     answer_if_tag_missing: str = "По такому тэгу ничего не найдено!"

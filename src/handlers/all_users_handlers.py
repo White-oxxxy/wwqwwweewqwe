@@ -7,14 +7,14 @@ from aiogram.fsm.context import FSMContext
 from lexicon.roles import Roles
 from fsm import *
 from lexicon import *
-from keyboards import *
+from keyboards.user import UserKeyboards
 from infrastructure.repository.user import (
     UserRepositoryORM,
     TextRepositoryORM,
     TextTagRepositoryORM,
 )
 from di.dev import get_container
-from utils.utils import to_dict
+from utils.utils import to_dict, join_tags
 
 
 all_users_router = Router()
@@ -25,11 +25,11 @@ async def process_start_command(message: Message) -> None:
     container = get_container()
     async with container() as req_container:
         await message.answer(
-            text=AllLexicon.answer_start.value, reply_markup=all_users_menu_kb
+            text=AllLexicon.answer_start.value, reply_markup=UserKeyboards.create_user_menu_kb()
         )
         user_repo = await req_container.get(UserRepositoryORM)
         user = await user_repo.get_by_user_id(message.from_user.id)
-        if user is None:
+        if not user:
             await user_repo.create(
                 user_id=message.from_user.id,
                 username=message.from_user.username,
@@ -41,7 +41,7 @@ async def process_start_command(message: Message) -> None:
 @all_users_router.message(Command(commands="help"), StateFilter(default_state))
 async def process_help_command(message: Message) -> None:
     await message.answer(
-        text=AllLexicon.answer_help.value, reply_markup=all_users_menu_kb
+        text=AllLexicon.answer_help.value, reply_markup=UserKeyboards.create_user_menu_kb()
     )
 
 
@@ -50,7 +50,7 @@ async def process_help_command(message: Message) -> None:
 )
 async def process_button_help(message: Message) -> None:
     await message.answer(
-        text=AllLexicon.answer_help.value, reply_markup=all_users_back_menu_kb
+        text=AllLexicon.answer_help.value, reply_markup=UserKeyboards.create_back_menu_kb()
     )
 
 
@@ -59,7 +59,7 @@ async def process_button_help(message: Message) -> None:
 )
 async def process_button_menu(message: Message) -> None:
     await message.answer(
-        text=AllLexicon.answer_menu.value, reply_markup=all_users_menu_kb
+        text=AllLexicon.answer_menu.value, reply_markup=UserKeyboards.create_user_menu_kb()
     )
 
 
@@ -68,7 +68,7 @@ async def process_button_menu(message: Message) -> None:
 )
 async def process_search(message: Message) -> None:
     await message.answer(
-        text=AllLexicon.answer_search.value, reply_markup=all_users_search_kb
+        text=AllLexicon.answer_search.value, reply_markup=UserKeyboards.create_search_kb()
     )
 
 
@@ -84,12 +84,12 @@ async def process_tag_list(message: Message) -> None:
 
     if tags:
         await message.answer(
-            text=", ".join(map(str, tags)), reply_markup=all_users_back_to_search_kb
+            text=join_tags(tags), reply_markup=UserKeyboards.create_back_to_search_kb()
         )
     else:
         await message.answer(
             text=AllLexicon.answer_empty_tag_list.value,
-            reply_markup=all_users_search_kb,
+            reply_markup=UserKeyboards.create_search_kb(),
         )
 
 
@@ -98,7 +98,7 @@ async def process_tag_list(message: Message) -> None:
 )
 async def process_back_to_search(message: Message) -> None:
     await message.answer(
-        text=AllLexicon.answer_search.value, reply_markup=all_users_search_kb
+        text=AllLexicon.answer_search.value, reply_markup=UserKeyboards.create_search_kb()
     )
 
 
@@ -107,7 +107,7 @@ async def process_back_to_search(message: Message) -> None:
 )
 async def process_back_to_search_while_fsm(message: Message, state: FSMContext) -> None:
     await message.answer(
-        text=AllLexicon.answer_search.value, reply_markup=all_users_search_kb
+        text=AllLexicon.answer_search.value, reply_markup=UserKeyboards.create_search_kb()
     )
     await state.clear()
 
@@ -118,7 +118,7 @@ async def process_back_to_search_while_fsm(message: Message, state: FSMContext) 
 async def process_tag_search(message: Message, state: FSMContext) -> None:
     await message.answer(
         text=AllLexicon.answer_insert_tag.value,
-        reply_markup=all_users_back_to_search_kb,
+        reply_markup=UserKeyboards.create_back_to_search_kb(),
     )
     await state.set_state(FSMTagSearchForm.fill_tag)
 
@@ -144,18 +144,21 @@ async def process_sent_tag(message: Message, state: FSMContext) -> None:
 
                 await message.answer(
                     text=data["text"][str(data["current_page"])]["value"],
-                    reply_markup=all_users_text_showing_interaction_kb,
+                    reply_markup=UserKeyboards.create_text_showing_kb(),
+                )
+                await message.answer(
+                    text=str(data["current_page"] + 1) + "/" + str(data["pages"])
                 )
             else:
                 await message.answer(
                     text=AllLexicon.answer_result_not_found.value,
-                    reply_markup=all_users_search_kb,
+                    reply_markup=UserKeyboards.create_search_kb(),
                 )
                 await state.clear()
     else:
         await message.answer(
             text=AllLexicon.answer_if_incorrect_prefix.value,
-            reply_markup=all_users_back_to_search_kb,
+            reply_markup=UserKeyboards.create_back_to_search_kb(),
         )
 
 
@@ -172,7 +175,10 @@ async def process_button_next_in_tag_fsm(message: Message, state: FSMContext) ->
 
         await message.answer(
             text=data["text"][str(data["current_page"])]["value"],
-            reply_markup=all_users_text_showing_interaction_kb,
+            reply_markup=UserKeyboards.create_text_showing_kb(),
+        )
+        await message.answer(
+            text=str(data["current_page"] + 1) + "/" + str(data["pages"])
         )
     else:
         await state.update_data(current_page=0)
@@ -181,7 +187,10 @@ async def process_button_next_in_tag_fsm(message: Message, state: FSMContext) ->
 
         await message.answer(
             text=data["text"][str(data["current_page"])]["value"],
-            reply_markup=all_users_text_showing_interaction_kb,
+            reply_markup=UserKeyboards.create_text_showing_kb(),
+        )
+        await message.answer(
+            text=str(data["current_page"] + 1) + "/" + str(data["pages"])
         )
 
 
@@ -198,7 +207,10 @@ async def process_button_back_in_tag_fsm(message: Message, state: FSMContext) ->
 
         await message.answer(
             text=data["text"][str(data["current_page"])]["value"],
-            reply_markup=all_users_text_showing_interaction_kb,
+            reply_markup=UserKeyboards.create_text_showing_kb(),
+        )
+        await message.answer(
+            text=str(data["current_page"] + 1) + "/" + str(data["pages"])
         )
     else:
         await state.update_data(current_page=data["pages"] - 1)
@@ -207,7 +219,10 @@ async def process_button_back_in_tag_fsm(message: Message, state: FSMContext) ->
 
         await message.answer(
             text=data["text"][str(data["current_page"])]["value"],
-            reply_markup=all_users_text_showing_interaction_kb,
+            reply_markup=UserKeyboards.create_text_showing_kb(),
+        )
+        await message.answer(
+            text=str(data["current_page"] + 1) + "/" + str(data["pages"])
         )
 
 
@@ -217,7 +232,7 @@ async def process_button_back_in_tag_fsm(message: Message, state: FSMContext) ->
 async def process_word_search(message: Message, state: FSMContext) -> None:
     await message.answer(
         text=AllLexicon.answer_insert_word.value,
-        reply_markup=all_users_back_to_search_kb,
+        reply_markup=UserKeyboards.create_back_to_search_kb(),
     )
     await state.set_state(FSMTextSearchForm.fill_text)
 
@@ -242,12 +257,15 @@ async def process_text_sent(message: Message, state: FSMContext) -> None:
 
             await message.answer(
                 text=data["text"][str(data["current_page"])]["value"],
-                reply_markup=all_users_text_showing_interaction_kb,
+                reply_markup=UserKeyboards.create_text_showing_kb(),
+            )
+            await message.answer(
+                text=str(data["current_page"] + 1) + "/" + str(data["pages"])
             )
         else:
             await message.answer(
                 text=AllLexicon.answer_result_not_found.value,
-                reply_markup=all_users_search_kb,
+                reply_markup=UserKeyboards.create_search_kb(),
             )
             await state.clear()
 
@@ -265,7 +283,10 @@ async def process_button_next_in_text_fsm(message: Message, state: FSMContext) -
 
         await message.answer(
             text=data["text"][str(data["current_page"])]["value"],
-            reply_markup=all_users_text_showing_interaction_kb,
+            reply_markup=UserKeyboards.create_text_showing_kb(),
+        )
+        await message.answer(
+            text=str(data["current_page"] + 1) + "/" + str(data["pages"])
         )
     else:
         await state.update_data(current_page=0)
@@ -274,7 +295,10 @@ async def process_button_next_in_text_fsm(message: Message, state: FSMContext) -
 
         await message.answer(
             text=data["text"][str(data["current_page"])]["value"],
-            reply_markup=all_users_text_showing_interaction_kb,
+            reply_markup=UserKeyboards.create_text_showing_kb(),
+        )
+        await message.answer(
+            text=str(data["current_page"] + 1) + "/" + str(data["pages"])
         )
 
 
@@ -291,7 +315,10 @@ async def process_button_back_in_text_fsm(message: Message, state: FSMContext) -
 
         await message.answer(
             text=data["text"][str(data["current_page"])]["value"],
-            reply_markup=all_users_text_showing_interaction_kb,
+            reply_markup=UserKeyboards.create_text_showing_kb(),
+        )
+        await message.answer(
+            text=str(data["current_page"] + 1) + "/" + str(data["pages"])
         )
     else:
         await state.update_data(current_page=data["pages"] - 1)
@@ -300,5 +327,8 @@ async def process_button_back_in_text_fsm(message: Message, state: FSMContext) -
 
         await message.answer(
             text=data["text"][str(data["current_page"])]["value"],
-            reply_markup=all_users_text_showing_interaction_kb,
+            reply_markup=UserKeyboards.create_text_showing_kb(),
+        )
+        await message.answer(
+            text=str(data["current_page"] + 1) + "/" + str(data["pages"])
         )
